@@ -44,7 +44,6 @@
             border: 1px solid #334155;
             margin-bottom: 20px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-            position: relative;
         }
         .balance-card h2 {
             font-size: 0.75rem;
@@ -139,7 +138,6 @@
             font-size: 0.8rem;
             color: #94a3b8;
         }
-        /* Standard Navigation Bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -177,28 +175,21 @@
     </div>
 
     <div class="container">
-        <!-- Balance Card with Naira Conversion -->
         <div class="balance-card">
             <h2>Total Balance</h2>
             <div class="balance-main" id="flowerCount">761</div>
             <div class="balance-sub">
                 <span class="badge-flower">🌸 FLOWER</span>
-                <span class="badge-naira" id="nairaBalance">₦152.20</span>
+                <span class="badge-naira" id="nairaBalance">₦76.10</span>
             </div>
         </div>
 
-        <!-- Action Buttons -->
         <div class="action-buttons">
-            <button class="action-btn btn-earn" onclick="handleEarnAdClick()">
-                ⚡ EARN ADS
-            </button>
-            <a href="wallet.html" class="action-btn btn-withdraw">
-                📥 WITHDRAW
-            </a>
+            <button class="action-btn btn-earn" onclick="handleEarnAdClick()">⚡ EARN ADS</button>
+            <a href="wallet.html" class="action-btn btn-withdraw">📥 WITHDRAW</a>
         </div>
 
         <div class="section-title">Quick Actions</div>
-        
         <a href="earn.html" class="quick-action-card">
             <div class="quick-info">
                 <h4>Go to Earn Hub</h4>
@@ -208,57 +199,56 @@
         </a>
     </div>
 
-    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
-        <a href="index.html" class="nav-item active">
-            <span class="nav-icon">🏠</span> HOME
-        </a>
-        <a href="earn.html" class="nav-item">
-            <span class="nav-icon">⚡</span> EARN
-        </a>
-        <a href="game.html" class="nav-item">
-            <span class="nav-icon">⭐</span> PLAY
-        </a>
-        <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span> FRIENDS
-        </a>
-        <a href="wallet.html" class="nav-item">
-            <span class="nav-icon">👤</span> ME
-        </a>
+        <a href="index.html" class="nav-item active"><span class="nav-icon">🏠</span> HOME</a>
+        <a href="earn.html" class="nav-item"><span class="nav-icon">⚡</span> EARN</a>
+        <a href="game.html" class="nav-item"><span class="nav-icon">⭐</span> PLAY</a>
+        <a href="friends.html" class="nav-item"><span class="nav-icon">👥</span> FRIENDS</a>
+        <a href="wallet.html" class="nav-item"><span class="nav-icon">👤</span> ME</a>
     </div>
 
     <script>
-        // Monetag Smart Link & Ad-Blocker Protection Logic
-        const monetagUrl = "https://omg10.com/your-smart-link-id"; // Replace with your Monetag link
+        const monetagUrl = "https://omg10.com/your-smart-link-id"; 
+        const maxDailyCap = 715;
+
+        function getTodayKey() {
+            return 'earned_' + new Date().toISOString().slice(0, 10);
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedBalance = localStorage.getItem('flowerBalance') || '761';
+            document.getElementById('flowerCount').innerText = Number(savedBalance).toLocaleString();
+            
+            // Updated Exchange Rate: 10 Flowers = ₦1 (5,000 Flowers = ₦500)
+            const nairaValue = (Number(savedBalance) / 10).toFixed(2);
+            document.getElementById('nairaBalance').innerText = `₦${Number(nairaValue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+        });
 
         function handleEarnAdClick() {
-            let adBlocked = false;
-            try {
-                let testAd = document.createElement('div');
-                testAd.innerHTML = '&nbsp;';
-                testAd.className = 'adsbox';
-                document.body.appendChild(testAd);
-                
-                window.setTimeout(function() {
-                    if (testAd.offsetHeight === 0) {
-                        adBlocked = true;
-                    }
-                    testAd.remove();
-                    
-                    if (adBlocked) {
-                        alert("Ad-blocker detected! Please disable your ad-blocker to view ads and count your views towards your withdrawal.");
-                    } else {
-                        // Increment verified ad views for withdrawal requirement
-                        let currentViews = Number(localStorage.getItem('monetag_verified_views') || 0);
-                        localStorage.setItem('monetag_verified_views', currentViews + 1);
+            const todayKey = getTodayKey();
+            let earnedToday = Number(localStorage.getItem(todayKey) || 0);
 
-                        // Open Monetag link in new tab
-                        window.open(monetagUrl, '_blank');
-                    }
-                }, 100);
-            } catch(e) {
-                window.open(monetagUrl, '_blank');
+            if (earnedToday >= maxDailyCap) {
+                alert("Daily earning limit reached! Come back tomorrow.");
+                return;
             }
+
+            let currentViews = Number(localStorage.getItem('monetag_verified_views') || 0);
+            let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
+
+            currentBalance += 50;
+            earnedToday += 50;
+            currentViews += 1;
+
+            localStorage.setItem('flowerBalance', currentBalance);
+            localStorage.setItem(todayKey, earnedToday);
+            localStorage.setItem('monetag_verified_views', currentViews);
+
+            document.getElementById('flowerCount').innerText = Number(currentBalance).toLocaleString();
+            const nairaValue = (currentBalance / 10).toFixed(2);
+            document.getElementById('nairaBalance').innerText = `₦${Number(nairaValue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+
+            window.open(monetagUrl, '_blank');
         }
     </script>
 </body>

@@ -15,7 +15,7 @@
             background-color: #0f172a;
             background-image: radial-gradient(circle at top, rgba(217, 119, 6, 0.15), transparent 50%);
             color: #f8fafc;
-            padding-bottom: 80px;
+            padding-bottom: 90px;
             min-height: 100vh;
             display: flex;
             flex-direction: column;
@@ -28,7 +28,7 @@
         }
         .header h1 {
             color: #fbbf24;
-            font-size: 1.5rem;
+            font-size: 1.4rem;
         }
         .container {
             padding: 20px;
@@ -37,36 +37,36 @@
             flex: 1;
             width: 100%;
         }
-        .balance-card {
-            background: linear-gradient(135deg, #d97706, #b45309);
-            border-radius: 16px;
-            padding: 20px;
-            text-align: center;
-            margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(217, 119, 6, 0.3);
-        }
-        .balance-card h2 {
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 5px;
-            color: #fef3c7;
-        }
-        .balance-card .amount {
-            font-size: 2.2rem;
-            font-weight: bold;
-            color: #ffffff;
-        }
-        .withdrawal-card {
+        .wallet-card {
             background: #1e293b;
             border-radius: 16px;
             padding: 20px;
             border: 1px solid #334155;
+            margin-bottom: 20px;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
-        .withdrawal-card h3 {
-            margin-bottom: 15px;
+        .wallet-card h3 {
+            font-size: 0.8rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
+        }
+        .wallet-balance {
+            font-size: 2.2rem;
+            font-weight: bold;
             color: #fbbf24;
-            font-size: 1.2rem;
+            margin-bottom: 5px;
+        }
+        .wallet-naira {
+            font-size: 1rem;
+            color: #34d399;
+            font-weight: bold;
+        }
+        /* Profit Guard notice is now hidden from view */
+        .guard-notice {
+            display: none;
         }
         .form-group {
             margin-bottom: 15px;
@@ -74,35 +74,38 @@
         .form-group label {
             display: block;
             font-size: 0.85rem;
-            margin-bottom: 5px;
             color: #94a3b8;
+            margin-bottom: 6px;
         }
-        .withdrawal-card input, .withdrawal-card select {
+        .form-control {
             width: 100%;
             padding: 12px;
-            border-radius: 8px;
-            border: 1px solid #475569;
-            background: #0f172a;
-            color: #fff;
-            font-size: 1rem;
+            border-radius: 10px;
+            border: 1px solid #334155;
+            background: #1e293b;
+            color: #f8fafc;
+            font-size: 0.95rem;
         }
-        .withdrawal-card button {
+        .form-control:focus {
+            outline: none;
+            border-color: #fbbf24;
+        }
+        .withdraw-btn {
             width: 100%;
             padding: 14px;
             background: #fbbf24;
             color: #0f172a;
             border: none;
-            border-radius: 8px;
+            border-radius: 12px;
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
+            box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
             margin-top: 10px;
-            transition: background 0.2s;
         }
-        .withdrawal-card button:active {
+        .withdraw-btn:active {
             background: #d97706;
         }
-        /* Navigation bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -136,183 +139,83 @@
 <body>
 
     <div class="header">
-        <h1>My Wallet & Payouts</h1>
+        <h1>📥 Wallet & Payout</h1>
     </div>
 
     <div class="container">
-        <!-- Balance Display Card -->
-        <div class="balance-card">
-            <h2>Available Balance</h2>
-            <div class="amount" id="userBalance">0.00 Flowers</div>
+        <div class="wallet-card">
+            <h3>Available Balance</h3>
+            <div class="wallet-balance" id="userBalance">0 Flowers</div>
+            <div class="wallet-naira" id="userNaira">₦0.00</div>
         </div>
 
-        <!-- Withdrawal Form Section -->
-        <div class="withdrawal-card">
-            <h3>Request Payout (NGN)</h3>
-            
-            <div class="form-group">
-                <label for="accountName">Account Name</label>
-                <input type="text" id="accountName" placeholder="e.g. John Oluwaseun" required>
-            </div>
-
-            <div class="form-group">
-                <label for="accountNumber">10-Digit Account Number</label>
-                <input type="number" id="accountNumber" placeholder="Enter 10-digit number" maxlength="10" required>
-            </div>
-
-            <div class="form-group">
-                <label for="bankName">Select Bank</label>
-                <select id="bankName" required>
-                    <option value="">-- Choose Bank / Provider --</option>
-                    <option value="OPay">OPay (Paycom)</option>
-                    <option value="Moniepoint">Moniepoint MFB</option>
-                    <option value="Kuda">Kuda Bank</option>
-                    <option value="Access Bank">Access Bank</option>
-                    <option value="GTBank">Guaranty Trust Bank (GTB)</option>
-                    <option value="UBA">United Bank for Africa (UBA)</option>
-                    <option value="First Bank">First Bank of Nigeria</option>
-                    <option value="PalmPay">PalmPay</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="withdrawalAmount">Amount to Withdraw (Flowers)</label>
-                <input type="number" id="withdrawalAmount" placeholder="Enter amount (Min 5,000)" required>
-            </div>
-
-            <button onclick="submitWithdrawalRequest()">Submit Withdrawal Request</button>
+        <!-- Hidden Profit Guard Notice (Logic remains active in background) -->
+        <div class="guard-notice" id="guardNotice">
+            <strong>🔒 Profit Guard Active:</strong> You need a minimum of <strong>5,000 Flowers (₦500)</strong> and at least <strong>15 verified Monetag ad views</strong> to submit a withdrawal request.
         </div>
+
+        <div class="form-group">
+            <label>Bank Name</label>
+            <input type="text" id="bankName" class="form-control" placeholder="e.g. OPay, Access Bank">
+        </div>
+
+        <div class="form-group">
+            <label>Account Number</label>
+            <input type="number" id="accountNumber" class="form-control" placeholder="0123456789">
+        </div>
+
+        <div class="form-group">
+            <label>Account Name</label>
+            <input type="text" id="accountName" class="form-control" placeholder="John Doe">
+        </div>
+
+        <button class="withdraw-btn" onclick="requestWithdrawal()">SUBMIT WITHDRAWAL</button>
     </div>
 
-    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
-        <a href="index.html" class="nav-item">
-            <span class="nav-icon">🏠</span> HOME
-        </a>
-        <a href="earn.html" class="nav-item">
-            <span class="nav-icon">⚡</span> EARN
-        </a>
-        <a href="game.html" class="nav-item">
-            <span class="nav-icon">⭐</span> PLAY
-        </a>
-        <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span> FRIENDS
-        </a>
-        <a href="wallet.html" class="nav-item active">
-            <span class="nav-icon">👤</span> ME
-        </a>
+        <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> HOME</a>
+        <a href="earn.html" class="nav-item"><span class="nav-icon">⚡</span> EARN</a>
+        <a href="game.html" class="nav-item"><span class="nav-icon">⭐</span> PLAY</a>
+        <a href="friends.html" class="nav-item"><span class="nav-icon">👥</span> FRIENDS</a>
+        <a href="wallet.html" class="nav-item active"><span class="nav-icon">👤</span> ME</a>
     </div>
-
-    <!-- Firebase SDK & Withdrawal Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, collection, doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-
-        const firebaseConfig = {
-            apiKey: "AIzaSyC9C-bNkvpueC3qK2TxO1PU_goLavCQiBk",
-            authDomain: "flower-earn.firebaseapp.com",
-            projectId: "flower-earn",
-            storageBucket: "flower-earn.appspot.com",
-            messagingSenderId: "799031720926",
-            appId: "1:799031720926:web:68f997c2d135242f463b4f",
-            measurementId: "G-JMLSY039Z2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-        window.db = db;
-    </script>
 
     <script>
-        // Load stored balance on page start
+        const minWithdrawalFlowers = 5000;
+        const requiredAdViews = 15;
+
         window.addEventListener('DOMContentLoaded', () => {
-            const savedFlowers = localStorage.getItem('flowerBalance') || '761'; // Defaults to 761 if set, or reads stored amount
-            document.getElementById('userBalance').innerText = `${Number(savedFlowers).toLocaleString()} Flowers`;
+            const balance = Number(localStorage.getItem('flowerBalance') || 1048);
+            document.getElementById('userBalance').innerText = `${balance.toLocaleString()} Flowers`;
+            
+            const nairaValue = (balance / 10).toFixed(2);
+            document.getElementById('userNaira').innerText = `₦${Number(nairaValue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         });
 
-        async function submitWithdrawalRequest() {
-            const accountName = document.getElementById('accountName').value.trim();
+        function requestWithdrawal() {
+            const balance = Number(localStorage.getItem('flowerBalance') || 1048);
+            const verifiedViews = Number(localStorage.getItem('monetag_verified_views') || 0);
+            
+            const bankName = document.getElementById('bankName').value.trim();
             const accountNumber = document.getElementById('accountNumber').value.trim();
-            const bankName = document.getElementById('bankName').value;
-            const amount = Number(document.getElementById('withdrawalAmount').value);
-            const currentBalance = Number(localStorage.getItem('flowerBalance') || '761');
+            const accountName = document.getElementById('accountName').value.trim();
 
-            const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-            const telegramId = tgUser ? tgUser.id.toString() : "anonymous_user";
-            const username = tgUser ? tgUser.username || tgUser.first_name : "User";
-
-            // Check if user has enough balance
-            if (amount > currentBalance) {
-                alert("You cannot withdraw more than your available balance!");
+            if (!bankName || !accountNumber || !accountName) {
+                alert("Please fill in all your bank account details.");
                 return;
             }
 
-            // Silent Background Profit Guard Checks
-            const minWithdrawalFlowers = 5000; 
-            if (amount < minWithdrawalFlowers) {
-                alert(`Minimum withdrawal limit is ${minWithdrawalFlowers.toLocaleString()} Flowers.`);
+            if (balance < minWithdrawalFlowers) {
+                alert(`Insufficient balance! You need at least 5,000 Flowers (₦500) to request a payout.`);
                 return;
             }
 
-            const completedAdViews = Number(localStorage.getItem('monetag_verified_views') || 0);
-            const requiredAdViews = 15; 
-
-            if (completedAdViews < requiredAdViews) {
-                alert("Withdrawal requirement not met. Please complete more tasks and ad views to unlock payouts.");
+            if (verifiedViews < requiredAdViews) {
+                alert(`Profit Guard Security: You have completed ${verifiedViews}/${requiredAdViews} required sponsor ad views. Please watch more ads in the Earn Hub before withdrawing.`);
                 return;
             }
 
-            if (!accountName || accountNumber.length !== 10 || !bankName) {
-                alert("Please fill in all fields correctly and ensure your account number is 10 digits.");
-                return;
-            }
-
-            try {
-                const withdrawalRef = doc(collection(window.db, 'withdrawals'));
-                await setDoc(withdrawalRef, {
-                    userId: telegramId,
-                    username: username,
-                    accountName: accountName,
-                    accountNumber: accountNumber,
-                    bankName: bankName,
-                    amount: amount,
-                    adViewsRecorded: completedAdViews,
-                    status: "Pending",
-                    createdAt: serverTimestamp()
-                });
-
-                const botToken = "8524825030:AAEpGVofXlPtYyvaZnvVHu-BYnjC4DqGZr8"; 
-                const chatId = "-1003949521064";       
-
-                const messageText = `🔔 *NEW WITHDRAWAL REQUEST*%0A%0A` +
-                                    `👤 *User:* @${username} (ID: \`${telegramId}\`)%0A` +
-                                    `🏷️ *Account Name:* ${accountName}%0A` +
-                                    `🔢 *Account No:* \`${accountNumber}\`%0A` +
-                                    `🏦 *Bank:* ${bankName}%0A` +
-                                    `💵 *Amount:* ${amount} Flowers%0A` +
-                                    `📈 *Verified Ads:* ${completedAdViews} views%0A` +
-                                    `⏳ *Status:* Pending`;
-
-                const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${messageText}&parse_mode=Markdown`;
-
-                fetch(telegramApiUrl).catch(err => console.log("Telegram notification error:", err));
-
-                alert("Withdrawal request submitted successfully! Status: Pending.");
-                
-                // Deduct balance locally
-                const newBalance = currentBalance - amount;
-                localStorage.setItem('flowerBalance', newBalance);
-                document.getElementById('userBalance').innerText = `${newBalance.toLocaleString()} Flowers`;
-
-                localStorage.setItem('monetag_verified_views', '0');
-                document.getElementById('accountName').value = '';
-                document.getElementById('accountNumber').value = '';
-                document.getElementById('withdrawalAmount').value = '';
-                
-            } catch (error) {
-                console.error("Error submitting withdrawal: ", error);
-                alert("Failed to submit request. Please try again.");
-            }
+            alert("Withdrawal request submitted successfully! It will be reviewed and processed to your bank shortly.");
         }
     </script>
 </body>

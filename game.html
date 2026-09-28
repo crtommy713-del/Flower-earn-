@@ -55,7 +55,6 @@
             font-weight: bold;
             flex-shrink: 0;
         }
-        /* Forces canvas container to take up roughly 70% of available height */
         .game-canvas-container {
             background: #1e293b;
             border-radius: 16px;
@@ -88,6 +87,12 @@
         }
         .start-btn:active {
             background: #d97706;
+        }
+        .start-btn:disabled {
+            background: #334155;
+            color: #64748b;
+            cursor: not-allowed;
+            box-shadow: none;
         }
         /* Navigation Bar */
         .nav-bar {
@@ -124,7 +129,7 @@
 
     <div class="header">
         <h1>🌸 Flower Catcher</h1>
-        <p>Catch falling flowers to grow your score!</p>
+        <p>Catch falling flowers to grow your balance!</p>
     </div>
 
     <div class="container">
@@ -163,15 +168,37 @@
         const canvas = document.getElementById('gameCanvas');
         const ctx = canvas.getContext('2d');
 
+        // Game & Economy Limits
+        const maxDailyPlays = 3;
+        const maxDailyEarnings = 715; 
+        
+        function getDailyDateKey() {
+            return new Date().toISOString().slice(0, 10);
+        }
+
+        function updateGameUI() {
+            let playsToday = Number(localStorage.getItem('game_plays_' + getDailyDateKey()) || 0);
+            let playsLeft = Math.max(0, maxDailyPlays - playsToday);
+            
+            document.getElementById('playsDisplay').innerText = `Plays: ${playsLeft}/${maxDailyPlays} Daily`;
+
+            if (playsLeft <= 0) {
+                let btn = document.getElementById('startBtn');
+                btn.disabled = true;
+                btn.innerText = "NO PLAYS LEFT TODAY";
+            }
+        }
+
         function initCanvasSize() {
             canvas.width = canvas.parentElement.clientWidth;
             canvas.height = canvas.parentElement.clientHeight;
         }
 
-        // Run sizing immediately and upon window loads
-        window.addEventListener('load', initCanvasSize);
+        window.addEventListener('load', () => {
+            initCanvasSize();
+            updateGameUI();
+        });
         window.addEventListener('resize', initCanvasSize);
-        initCanvasSize();
 
         let score = 0;
         let isPlaying = false;
@@ -179,7 +206,6 @@
         let basket = { width: 90, height: 26, x: 0, y: 0 };
         let gameInterval = null;
 
-        // Position basket properly once dimensions are set
         function resetBasket() {
             basket.x = (canvas.width / 2) - (basket.width / 2);
             basket.y = canvas.height - 40;
@@ -190,7 +216,6 @@
             let rect = canvas.getBoundingClientRect();
             let touchX = e.touches[0].clientX - rect.left;
             basket.x = touchX - (basket.width / 2);
-            // Keep basket inside boundaries
             if (basket.x < 0) basket.x = 0;
             if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
         }, { passive: true });
@@ -204,6 +229,12 @@
         });
 
         function startGame() {
+            let playsToday = Number(localStorage.getItem('game_plays_' + getDailyDateKey()) || 0);
+            if (playsToday >= maxDailyPlays) {
+                alert("You've used all your plays for today. Come back tomorrow!");
+                return;
+            }
+
             initCanvasSize();
             resetBasket();
             score = 0;
@@ -212,20 +243,13 @@
             isPlaying = true;
             flowers = [];
 
-            // Spawn flowers periodically
             if (gameInterval) clearInterval(gameInterval);
             gameInterval = setInterval(spawnFlower, 750);
 
             requestAnimationFrame(loop);
 
             // Timer for 20 seconds game round
-            setTimeout(() => {
-                isPlaying = false;
-                clearInterval(gameInterval);
-                document.getElementById('startBtn').style.display = 'block';
-                document.getElementById('startBtn').innerText = "PLAY AGAIN";
-                alert(`Time's up! You caught ${score} flowers.`);
-            }, 20000);
+            setTimeout(endGame, 20000);
         }
 
         function spawnFlower() {
@@ -239,7 +263,6 @@
 
         function loop() {
             if (!canvas.width || !canvas.height) initCanvasSize();
-
             ctx.clearRect(0, 0, canvas.width, canvas.height);
 
             // Draw Basket
@@ -250,24 +273,15 @@
             for (let i = flowers.length - 1; i >= 0; i--) {
                 let f = flowers[i];
                 f.y += f.speed;
-
-                // Render Flower
                 ctx.font = "26px sans-serif";
                 ctx.fillText("🌸", f.x, f.y);
 
-                // Collision Check against Basket
-                if (
-                    f.y + 20 >= basket.y &&
-                    f.y <= basket.y + basket.height &&
-                    f.x >= basket.x - 15 &&
-                    f.x <= basket.x + basket.width
-                ) {
+                // Collision
+                if (f.y + 20 >= basket.y && f.y <= basket.y + basket.height && f.x >= basket.x - 15 && f.x <= basket.x + basket.width) {
                     score += 1;
                     document.getElementById('scoreDisplay').innerText = score;
                     flowers.splice(i, 1);
-                } 
-                // Remove if it falls past screen
-                else if (f.y > canvas.height) {
+                } else if (f.y > canvas.height) {
                     flowers.splice(i, 1);
                 }
             }
@@ -275,6 +289,42 @@
             if (isPlaying) {
                 requestAnimationFrame(loop);
             }
+        }
+
+        function endGame() {
+            isPlaying = false;
+            clearInterval(gameInterval);
+            
+            const dateKey = getDailyDateKey();
+            let playsToday = Number(localStorage.getItem('game_plays_' + dateKey) || 0);
+            playsToday += 1;
+            localStorage.setItem('game_plays_' + dateKey, playsToday);
+
+            // Economy Calculations & Profit Guard
+            let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
+            let earnedToday = Number(localStorage.getItem('earned_' + dateKey) || 0);
+            
+            // Calculate how much space is left before hitting the 715 daily limit
+            let spaceLeft = Math.max(0, maxDailyEarnings - earnedToday);
+            
+            // The user only gets rewarded up to what their daily limit allows
+            let actualReward = Math.min(score, spaceLeft);
+
+            if (actualReward > 0) {
+                currentBalance += actualReward;
+                earnedToday += actualReward;
+                
+                localStorage.setItem('flowerBalance', currentBalance);
+                localStorage.setItem('earned_' + dateKey, earnedToday);
+                
+                alert(`Time's up! You caught ${score} flowers.\n\n+${actualReward} Flowers have been added to your wallet!`);
+            } else {
+                alert(`Time's up! You caught ${score} flowers, but you have already reached your maximum daily earning limit of ${maxDailyEarnings} Flowers.`);
+            }
+
+            document.getElementById('startBtn').style.display = 'block';
+            document.getElementById('startBtn').innerText = "PLAY AGAIN";
+            updateGameUI(); // Updates the X/3 display and disables button if 0 left
         }
     </script>
 </body>

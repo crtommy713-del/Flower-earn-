@@ -3,303 +3,273 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Earn - Earn Tasks</title>
-    
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+    <title>Flower Earn - Earn Hub</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #120f08 0%, #241d08 100%);
+            background-color: #0f172a;
+            background-image: radial-gradient(circle at top, rgba(217, 119, 6, 0.15), transparent 50%);
             color: #f8fafc;
-            min-height: 100vh;
             padding-bottom: 90px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 20px;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+        }
+        .header h1 {
+            color: #fbbf24;
+            font-size: 1.4rem;
+        }
+        .header p {
+            font-size: 0.85rem;
+            color: #94a3b8;
+            margin-top: 5px;
         }
         .container {
-            padding: 16px;
-            max-width: 480px;
+            padding: 20px;
+            max-width: 600px;
             margin: 0 auto;
+            flex: 1;
+            width: 100%;
         }
-        .page-header {
-            font-size: 20px;
-            font-weight: 800;
-            color: #eab308;
-            margin-bottom: 6px;
-        }
-        .page-subtitle {
-            font-size: 12px;
-            color: #94a3b8;
+        .info-card {
+            background: #1e293b;
+            border-radius: 14px;
+            padding: 15px 20px;
+            border: 1px solid #334155;
             margin-bottom: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
-        .card-section-title {
-            font-size: 12px;
-            color: #facc15;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin: 15px 0 10px 4px;
-            font-weight: 700;
+        .info-card div h4 {
+            font-size: 0.85rem;
+            color: #94a3b8;
+        }
+        .info-card div p {
+            font-size: 1.1rem;
+            color: #fbbf24;
+            font-weight: bold;
         }
         .task-card {
-            background: rgba(43, 35, 14, 0.6);
-            border: 1px solid rgba(234, 179, 8, 0.25);
+            background: #1e293b;
             border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
+            padding: 18px;
+            border: 1px solid #334155;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
         }
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
+        .task-info h3 {
+            font-size: 1rem;
+            color: #fbbf24;
+            margin-bottom: 4px;
         }
-        .task-icon {
-            font-size: 26px;
-            background: rgba(234, 179, 8, 0.1);
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(234, 179, 8, 0.2);
-        }
-        .task-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #f1f5f9;
-            margin-bottom: 3px;
-        }
-        .task-desc {
-            font-size: 11px;
+        .task-info p {
+            font-size: 0.8rem;
             color: #94a3b8;
         }
-        .earn-action-btn {
-            background: #eab308;
-            color: #120f08;
+        .task-btn {
+            background: #fbbf24;
+            color: #0f172a;
             border: none;
-            padding: 8px 14px;
-            border-radius: 8px;
-            font-weight: 700;
-            font-size: 12px;
+            padding: 10px 16px;
+            border-radius: 10px;
+            font-weight: bold;
+            font-size: 0.9rem;
             cursor: pointer;
-            text-decoration: none;
-            display: inline-block;
+            transition: background 0.2s;
+            white-space: nowrap;
         }
-        .earn-action-btn:active {
-            transform: scale(0.95);
+        .task-btn:active {
+            background: #d97706;
         }
-        .earn-action-btn:disabled {
-            background: #475569;
-            color: #94a3b8;
+        .task-btn:disabled {
+            background: #334155;
+            color: #64748b;
             cursor: not-allowed;
         }
-
-        /* Bottom Navigation Bar */
+        /* Navigation bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(22, 18, 6, 0.95);
-            backdrop-filter: blur(12px);
+            background: #1e293b;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 16px 0;
-            border-top: 1px solid rgba(234, 179, 8, 0.2);
-            z-index: 100;
+            padding: 10px 0;
+            border-top: 1px solid #334155;
+            z-index: 1000;
         }
         .nav-item {
-            color: #64748b;
+            color: #94a3b8;
             text-decoration: none;
-            font-size: 10px;
             text-align: center;
-            font-weight: 600;
+            font-size: 0.75rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .nav-item.active {
-            color: #eab308;
+            color: #fbbf24;
         }
         .nav-icon {
-            font-size: 18px;
+            font-size: 1.2rem;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
+    <div class="header">
+        <h1>⚡ Earn Hub</h1>
+        <p>Complete daily tasks and ads to hit your 7-day payout goal!</p>
+    </div>
+
     <div class="container">
-        <div class="page-header">Earn More Flowers</div>
-        <div class="page-subtitle">Complete daily tasks & ads to unlock withdrawals</div>
-
-        <div class="card-section-title">Sponsored Ad Links (Max 5/day each)</div>
-        
-        <!-- Task 1 -->
-        <div class="task-card">
-            <div class="task-left">
-                <div class="task-icon">🎬</div>
-                <div>
-                    <div class="task-title">Smart Ad Link #1</div>
-                    <div class="task-desc">Earn +100 Flowers <span id="count-task1" style="color: #facc15;">(0/5)</span></div>
-                </div>
+        <!-- Daily Progress Counter -->
+        <div class="info-card">
+            <div>
+                <h4>Today's Earned</h4>
+                <p id="todayEarned">0 Flowers</p>
             </div>
-            <button class="earn-action-btn" id="btn-task1" onclick="executeTask('task1', 'https://omg10.com/4/11910754', 100)">Visit</button>
+            <div>
+                <h4>Daily Limit Left</h4>
+                <p id="dailyLimitLeft">715 Flowers</p>
+            </div>
         </div>
 
-        <!-- Task 2 -->
+        <!-- Task 1: Monetag Smart Link Ad View -->
         <div class="task-card">
-            <div class="task-left">
-                <div class="task-icon">🎯</div>
-                <div>
-                    <div class="task-title">Smart Ad Link #2</div>
-                    <div class="task-desc">Earn +100 Flowers <span id="count-task2" style="color: #facc15;">(0/5)</span></div>
-                </div>
+            <div class="task-info">
+                <h3>View Sponsor Ad</h3>
+                <p>Earn +50 Flowers per view (Max daily limit applied)</p>
             </div>
-            <button class="earn-action-btn" id="btn-task2" onclick="executeTask('task2', 'https://omg10.com/4/11496906', 100)">Visit</button>
+            <button class="task-btn" id="adTaskBtn" onclick="completeAdTask()">WATCH (+50 🌸)</button>
         </div>
 
-        <!-- Task 3 -->
+        <!-- Task 2: Daily Bonus Check-in -->
         <div class="task-card">
-            <div class="task-left">
-                <div class="task-icon">⚡</div>
-                <div>
-                    <div class="task-title">Smart Ad Link #3</div>
-                    <div class="task-desc">Earn +150 Flowers <span id="count-task3" style="color: #facc15;">(0/5)</span></div>
-                </div>
+            <div class="task-info">
+                <h3>Daily Check-in Bonus</h3>
+                <p>Claim your free daily reward of +215 Flowers</p>
             </div>
-            <button class="earn-action-btn" id="btn-task3" onclick="executeTask('task3', 'https://omg10.com/4/11505493', 150)">Visit</button>
+            <button class="task-btn" id="dailyBonusBtn" onclick="claimDailyBonus()">CLAIM (+215 🌸)</button>
         </div>
 
-        <!-- Task 4 -->
+        <!-- Task 3: Play Flower Catcher Game -->
         <div class="task-card">
-            <div class="task-left">
-                <div class="task-icon">💎</div>
-                <div>
-                    <div class="task-title">Smart Ad Link #4</div>
-                    <div class="task-desc">Earn +200 Flowers <span id="count-task4" style="color: #facc15;">(0/5)</span></div>
-                </div>
+            <div class="task-info">
+                <h3>Play Game Session</h3>
+                <p>Catch flowers in the mini-game to earn up to +450 Flowers</p>
             </div>
-            <button class="earn-action-btn" id="btn-task4" onclick="executeTask('task4', 'https://omg10.com/4/11910761', 200)">Visit</button>
+            <a href="game.html" class="task-btn" style="text-decoration: none; text-align: center;">PLAY NOW</a>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
         <a href="index.html" class="nav-item">
-            <span class="nav-icon">🏠</span> Home
+            <span class="nav-icon">🏠</span> HOME
         </a>
         <a href="earn.html" class="nav-item active">
-            <span class="nav-icon">⚡</span> Earn
+            <span class="nav-icon">⚡</span> EARN
         </a>
         <a href="game.html" class="nav-item">
-            <span class="nav-icon">🌟</span> Play
+            <span class="nav-icon">⭐</span> PLAY
         </a>
         <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span> Friends
+            <span class="nav-icon">👥</span> FRIENDS
         </a>
         <a href="wallet.html" class="nav-item">
-            <span class="nav-icon">👤</span> Me
+            <span class="nav-icon">👤</span> ME
         </a>
     </div>
 
-    <!-- Firebase SDK & Daily Limit Logic -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, runTransaction } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    <script>
+        const monetagUrl = "https://omg10.com/your-smart-link-id"; // Replace with your Monetag link
+        const maxDailyCap = 715;
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC9C-bNkvpueC3qK2TxOlPU_goLavCQiBk",
-            authDomain: "flower-earn.firebaseapp.com",
-            projectId: "flower-earn",
-            storageBucket: "flower-earn.firebasestorage.app",
-            messagingSenderId: "799031720926",
-            appId: "1:799031720926:web:68f997c2d135242f463b4f",
-            measurementId: "G-JMLSY039Z2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        const MAX_DAILY_LIMIT = 5;
-        let userId = "7927840249";
-
-        if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-            userId = String(window.Telegram.WebApp.initDataUnsafe.user.id);
+        function getTodayKey() {
+            return 'earned_' + new Date().toISOString().slice(0, 10);
         }
 
-        const userRef = doc(db, "users", userId);
-        const todayDateStr = new Date().toISOString().slice(0, 10); // Format: YYYY-MM-DD
+        function updateDisplay() {
+            const todayKey = getTodayKey();
+            const earnedToday = Number(localStorage.getItem(todayKey) || 0);
+            const timeLeft = Math.max(0, maxDailyCap - earnedToday);
 
-        async function checkLimits() {
-            try {
-                const docSnap = await getDoc(userRef);
-                if (docSnap.exists()) {
-                    const data = docSnap.data();
-                    const tasksData = data.tasks && data.tasks.date === todayDateStr ? data.tasks : {};
+            document.getElementById('todayEarned').innerText = `${earnedToday} Flowers`;
+            document.getElementById('dailyLimitLeft').innerText = `${timeLeft} Flowers`;
 
-                    for (let i = 1; i <= 4; i++) {
-                        const taskId = `task${i}`;
-                        const count = tasksData[taskId] || 0;
-                        document.getElementById(`count-${taskId}`).innerText = `(${count}/${MAX_DAILY_LIMIT})`;
-                        
-                        if (count >= MAX_DAILY_LIMIT) {
-                            const btn = document.getElementById(`btn-${taskId}`);
-                            btn.innerText = "Completed";
-                            btn.disabled = true;
-                        }
-                    }
-                }
-            } catch (err) {
-                console.error("Error checking limits:", err);
+            if (earnedToday >= maxDailyCap) {
+                document.getElementById('adTaskBtn').disabled = true;
+                document.getElementById('adTaskBtn').innerText = "LIMIT REACHED";
             }
         }
 
-        window.executeTask = async function(taskId, adUrl, rewardAmount) {
-            // Open the ad link instantly in a new tab
-            window.open(adUrl, '_blank');
+        window.addEventListener('DOMContentLoaded', updateDisplay);
 
-            try {
-                // Update Firebase balance and increment daily task counter securely
-                await runTransaction(db, async (transaction) => {
-                    const currentSnap = await transaction.get(userRef);
-                    let data = currentSnap.exists() ? currentSnap.data() : {};
-                    
-                    let curBal = data.balance || 361;
-                    let tasks = data.tasks && data.tasks.date === todayDateStr ? data.tasks : { date: todayDateStr };
-                    
-                    let currentCount = tasks[taskId] || 0;
-                    if (currentCount >= MAX_DAILY_LIMIT) {
-                        throw new Error("Daily limit reached for this task!");
-                    }
+        function completeAdTask() {
+            const todayKey = getTodayKey();
+            let earnedToday = Number(localStorage.getItem(todayKey) || 0);
 
-                    tasks[taskId] = currentCount + 1;
-
-                    transaction.set(userRef, { 
-                        balance: curBal + rewardAmount,
-                        tasks: tasks
-                    }, { merge: true });
-                });
-
-                if (window.Telegram?.WebApp?.HapticFeedback) {
-                    window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                }
-
-                alert(`Successfully credited +${rewardAmount} Flowers!`);
-                location.reload();
-            } catch (err) {
-                alert(err.message || "Error processing reward.");
+            if (earnedToday >= maxDailyCap) {
+                alert("You have reached your daily earning cap! Come back tomorrow to continue.");
+                return;
             }
+
+            // Open Monetag link
+            window.open(monetagUrl, '_blank');
+
+            // Add reward and verified view count
+            let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
+            let currentViews = Number(localStorage.getItem('monetag_verified_views') || 0);
+
+            currentBalance += 50;
+            earnedToday += 50;
+            currentViews += 1;
+
+            localStorage.setItem('flowerBalance', currentBalance);
+            localStorage.setItem(todayKey, earnedToday);
+            localStorage.setItem('monetag_verified_views', currentViews);
+
+            updateDisplay();
+            alert("Reward claimed! +50 Flowers added to your balance.");
         }
 
-        checkLimits();
+        function claimDailyBonus() {
+            const bonusKey = 'bonus_claimed_' + new Date().toISOString().slice(0, 10);
+            if (localStorage.getItem(bonusKey)) {
+                alert("You have already claimed your daily bonus today!");
+                document.getElementById('dailyBonusBtn').disabled = true;
+                document.getElementById('dailyBonusBtn').innerText = "CLAIMED";
+                return;
+            }
+
+            let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
+            currentBalance += 215;
+
+            localStorage.setItem('flowerBalance', currentBalance);
+            localStorage.setItem(bonusKey, 'true');
+            
+            document.getElementById('dailyBonusBtn').disabled = true;
+            document.getElementById('dailyBonusBtn').innerText = "CLAIMED";
+            alert("Success! +215 Daily Bonus Flowers added.");
+        }
     </script>
 </body>
 </html>
