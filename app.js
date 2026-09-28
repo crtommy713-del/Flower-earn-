@@ -1,6 +1,7 @@
 import { syncTelegramUser, addFlowersToDatabase } from './db.js';
 
-window.addEventListener('DOMContentLoaded', async () => {
+// Run immediately since module scripts are deferred automatically
+async function initApp() {
     const balanceEl = document.getElementById('flowerBalance');
     const claimBtn = document.getElementById('claimBtn');
 
@@ -25,4 +26,6 @@ window.addEventListener('DOMContentLoaded', async () => {
             location.reload();
         });
     }
-});
+}
+
+initApp();
