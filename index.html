@@ -16,7 +16,7 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #041008 0%, #082414 100%);
+            background: linear-gradient(135deg, #120f08 0%, #241d08 100%);
             color: #f8fafc;
             min-height: 100vh;
             padding-bottom: 90px;
@@ -29,8 +29,8 @@
         
         /* Top Balance Card */
         .balance-card {
-            background: linear-gradient(145deg, rgba(13, 40, 24, 0.9), rgba(6, 22, 13, 0.9));
-            border: 1px solid rgba(82, 183, 136, 0.3);
+            background: linear-gradient(145deg, rgba(40, 34, 13, 0.9), rgba(22, 18, 6, 0.9));
+            border: 1px solid rgba(234, 179, 8, 0.35);
             border-radius: 20px;
             padding: 20px;
             position: relative;
@@ -40,7 +40,7 @@
         }
         .balance-title {
             font-size: 11px;
-            color: #74c69d;
+            color: #facc15;
             letter-spacing: 1.5px;
             font-weight: 700;
             margin-bottom: 4px;
@@ -54,7 +54,7 @@
         .balance-amount {
             font-size: 36px;
             font-weight: 800;
-            color: #52b788;
+            color: #eab308;
             letter-spacing: -0.5px;
         }
         .token-info {
@@ -64,8 +64,8 @@
             margin-top: 8px;
         }
         .token-badge {
-            background: rgba(82, 183, 136, 0.15);
-            color: #74c69d;
+            background: rgba(234, 179, 8, 0.15);
+            color: #facc15;
             font-size: 11px;
             padding: 3px 8px;
             border-radius: 6px;
@@ -81,7 +81,7 @@
         }
         .clover-icon {
             font-size: 45px;
-            filter: drop-shadow(0 0 10px rgba(82, 183, 136, 0.4));
+            filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.4));
         }
 
         /* Action Buttons Grid */
@@ -92,8 +92,8 @@
             margin-bottom: 16px;
         }
         .action-btn {
-            background: linear-gradient(135deg, #1b4332 0%, #081c15 100%);
-            border: 1px solid rgba(82, 183, 136, 0.4);
+            background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
+            border: 1px solid rgba(234, 179, 8, 0.4);
             color: #ffffff;
             padding: 14px;
             border-radius: 14px;
@@ -109,24 +109,25 @@
             transition: all 0.2s ease;
             text-transform: uppercase;
             letter-spacing: 0.5px;
+            text-decoration: none;
         }
         .action-btn:active {
             transform: scale(0.97);
-            background: #2d6a4f;
+            background: #b45309;
         }
 
         /* Task & Feature Cards */
         .card-section-title {
             font-size: 12px;
-            color: #74c69d;
+            color: #facc15;
             text-transform: uppercase;
             letter-spacing: 1px;
             margin: 20px 0 10px 4px;
             font-weight: 700;
         }
         .task-card {
-            background: rgba(14, 43, 26, 0.6);
-            border: 1px solid rgba(82, 183, 136, 0.25);
+            background: rgba(43, 35, 14, 0.6);
+            border: 1px solid rgba(234, 179, 8, 0.25);
             border-radius: 16px;
             padding: 16px;
             margin-bottom: 12px;
@@ -134,10 +135,11 @@
             align-items: center;
             justify-content: space-between;
             box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            text-decoration: none;
             transition: border-color 0.2s;
         }
         .task-card:active {
-            border-color: #52b788;
+            border-color: #eab308;
         }
         .task-left {
             display: flex;
@@ -146,10 +148,10 @@
         }
         .task-icon {
             font-size: 26px;
-            background: rgba(82, 183, 136, 0.1);
+            background: rgba(234, 179, 8, 0.1);
             padding: 10px;
             border-radius: 12px;
-            border: 1px solid rgba(82, 183, 136, 0.2);
+            border: 1px solid rgba(234, 179, 8, 0.2);
         }
         .task-title {
             font-size: 14px;
@@ -162,7 +164,7 @@
             color: #94a3b8;
         }
         .arrow {
-            color: #74c69d;
+            color: #facc15;
             font-size: 16px;
             font-weight: bold;
         }
@@ -173,12 +175,12 @@
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(6, 22, 13, 0.95);
+            background: rgba(22, 18, 6, 0.95);
             backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-around;
             padding: 10px 0 16px 0;
-            border-top: 1px solid rgba(82, 183, 136, 0.2);
+            border-top: 1px solid rgba(234, 179, 8, 0.2);
             z-index: 100;
         }
         .nav-item {
@@ -195,7 +197,7 @@
             letter-spacing: 0.5px;
         }
         .nav-item.active {
-            color: #52b788;
+            color: #eab308;
         }
         .nav-icon {
             font-size: 18px;
@@ -210,63 +212,39 @@
             <div class="balance-title">Total Balance</div>
             <div class="balance-row">
                 <div>
-                    <div id="flowerBalance" class="balance-amount">361</div>
+                    <div id="flowerBalance" class="balance-amount">Loading...</div>
                     <div class="token-info">
-                        <span class="token-badge">🍀 FLOWER</span>
-                        <span id="usdValue" class="usd-badge">$0.0072</span>
+                        <span class="token-badge">🌟 FLOWER</span>
+                        <span id="usdValue" class="usd-badge">$0.00</span>
                     </div>
                 </div>
-                <div class="clover-icon">🍀</div>
+                <div class="clover-icon">🌟</div>
             </div>
         </div>
 
         <!-- Action Buttons -->
         <div class="action-grid">
-            <button id="claimBtn" class="action-btn">
-                <span>⚡</span> Claim +50
-            </button>
-            <button class="action-btn" onclick="alert('Withdrawal feature coming soon!')">
+            <a href="earn.html" class="action-btn">
+                <span>⚡</span> Earn Ads
+            </a>
+            <button class="action-btn" style="border:none; width:100%;" onclick="alert('Withdrawals unlock once task limits are met!')">
                 <span>📥</span> Withdraw
             </button>
         </div>
 
-        <!-- Tasks Section -->
-        <div class="card-section-title">Exclusive Tasks</div>
+        <!-- Quick Navigation to Earn Section -->
+        <div class="card-section-title">Quick Actions</div>
         
-        <div class="task-card" onclick="alert('Telegram Stars task selected!')">
+        <a href="earn.html" class="task-card">
             <div class="task-left">
-                <div class="task-icon">⭐</div>
+                <div class="task-icon">🚀</div>
                 <div>
-                    <div class="task-title">Mine Telegram Stars</div>
-                    <div class="task-desc">Pick a gift, mine it → claim real gifts</div>
+                    <div class="task-title">Go to Earn Hub</div>
+                    <div class="task-desc">Complete smart links & ads to grow balance</div>
                 </div>
             </div>
             <div class="arrow">›</div>
-        </div>
-
-        <div class="task-card" onclick="alert('Quick task selected!')">
-            <div class="task-left">
-                <div class="task-icon">⚡</div>
-                <div>
-                    <div class="task-title">Quick Tasks</div>
-                    <div class="task-desc">One task at a time — links, sites</div>
-                </div>
-            </div>
-            <div class="arrow">›</div>
-        </div>
-
-        <div class="card-section-title">Watch & Earn</div>
-        
-        <div class="task-card" onclick="alert('Ad task selected!')">
-            <div class="task-left">
-                <div class="task-icon">👀</div>
-                <div>
-                    <div class="task-title">Ad #1 (0/7)</div>
-                    <div class="task-desc">Earn +200 Flowers</div>
-                </div>
-            </div>
-            <div class="arrow">›</div>
-        </div>
+        </a>
     </div>
 
     <!-- Bottom Navigation Bar -->
@@ -278,7 +256,7 @@
             <span class="nav-icon">⚡</span> Earn
         </a>
         <a href="game.html" class="nav-item">
-            <span class="nav-icon">🍀</span> Play
+            <span class="nav-icon">🌟</span> Play
         </a>
         <a href="friends.html" class="nav-item">
             <span class="nav-icon">👥</span> Friends
@@ -291,7 +269,7 @@
     <!-- Firebase SDK & Application Logic -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC9C-bNkvpueC3qK2TxOlPU_goLavCQiBk",
@@ -309,7 +287,6 @@
         async function initApp() {
             const balanceEl = document.getElementById('flowerBalance');
             const usdEl = document.getElementById('usdValue');
-            const claimBtn = document.getElementById('claimBtn');
 
             try {
                 let userId = "7927840249";
@@ -339,27 +316,10 @@
                 if (balanceEl) balanceEl.innerText = balance;
                 if (usdEl) usdEl.innerText = "$" + (balance * 0.00002).toFixed(4);
 
-                if (claimBtn) {
-                    claimBtn.addEventListener('click', async () => {
-                        claimBtn.innerText = "Saving...";
-                        claimBtn.disabled = true;
-
-                        await runTransaction(db, async (transaction) => {
-                            const currentSnap = await transaction.get(userRef);
-                            const curBal = currentSnap.exists() ? (currentSnap.data().balance || 361) : 361;
-                            transaction.set(userRef, { balance: curBal + 50 }, { merge: true });
-                        });
-
-                        if (window.Telegram?.WebApp?.HapticFeedback) {
-                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                        }
-
-                        location.reload();
-                    });
-                }
             } catch (error) {
                 console.error("Database sync error:", error);
                 if (balanceEl) balanceEl.innerText = "361";
+                if (usdEl) usdEl.innerText = "$0.0072";
             }
         }
 
