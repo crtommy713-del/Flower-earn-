@@ -42,66 +42,76 @@
             flex: 1;
             width: 100%;
         }
-        .info-card {
-            background: #1e293b;
-            border-radius: 14px;
-            padding: 15px 20px;
-            border: 1px solid #334155;
-            margin-bottom: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        .info-card div h4 {
+        .section-title {
             font-size: 0.85rem;
-            color: #94a3b8;
-        }
-        .info-card div p {
-            font-size: 1.1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
             color: #fbbf24;
-            font-weight: bold;
-        }
-        .task-card {
-            background: #1e293b;
-            border-radius: 16px;
-            padding: 18px;
-            border: 1px solid #334155;
             margin-bottom: 15px;
             display: flex;
-            align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+            align-items: center;
         }
-        .task-info h3 {
-            font-size: 1rem;
-            color: #fbbf24;
-            margin-bottom: 4px;
+        .ads-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
         }
-        .task-info p {
+        .ad-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 16px;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
+        }
+        .ad-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        .ad-title {
             font-size: 0.8rem;
-            color: #94a3b8;
-        }
-        .task-btn {
-            background: #fbbf24;
-            color: #0f172a;
-            border: none;
-            padding: 10px 16px;
-            border-radius: 10px;
             font-weight: bold;
-            font-size: 0.9rem;
+            color: #94a3b8;
+            text-transform: uppercase;
+        }
+        .ad-counter {
+            font-size: 0.75rem;
+            color: #34d399;
+            background: rgba(52, 211, 153, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        .ad-reward {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #fbbf24;
+            margin-bottom: 12px;
+        }
+        .ad-btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: 10px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.85rem;
             cursor: pointer;
-            transition: background 0.2s;
-            white-space: nowrap;
+            text-align: center;
+            background: #10b981;
+            color: #ffffff;
+            box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
         }
-        .task-btn:active {
-            background: #d97706;
-        }
-        .task-btn:disabled {
+        .ad-btn:disabled {
             background: #334155;
             color: #64748b;
             cursor: not-allowed;
+            box-shadow: none;
         }
-        /* Navigation bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -136,139 +146,129 @@
 
     <div class="header">
         <h1>⚡ Earn Hub</h1>
-        <p>Complete daily tasks and ads to hit your 7-day payout goal!</p>
+        <p>Watch sponsored links to grow your flower balance!</p>
     </div>
 
     <div class="container">
-        <!-- Daily Progress Counter -->
-        <div class="info-card">
-            <div>
-                <h4>Today's Earned</h4>
-                <p id="todayEarned">0 Flowers</p>
-            </div>
-            <div>
-                <h4>Daily Limit Left</h4>
-                <p id="dailyLimitLeft">715 Flowers</p>
-            </div>
+        <div class="section-title">
+            <span>Watch & Earn</span>
+            <span id="availableAdsCount">4 available</span>
         </div>
 
-        <!-- Task 1: Monetag Smart Link Ad View -->
-        <div class="task-card">
-            <div class="task-info">
-                <h3>View Sponsor Ad</h3>
-                <p>Earn +50 Flowers per view (Max daily limit applied)</p>
+        <div class="ads-grid">
+            <!-- AD #1 -->
+            <div class="ad-card" id="cardAd1">
+                <div>
+                    <div class="ad-header">
+                        <span class="ad-title">Ad #1</span>
+                        <span class="ad-counter" id="count1">0/5</span>
+                    </div>
+                    <div class="ad-reward">🌸 50</div>
+                </div>
+                <button class="ad-btn" id="btnAd1" onclick="watchAd(1)">WATCH</button>
             </div>
-            <button class="task-btn" id="adTaskBtn" onclick="completeAdTask()">WATCH (+50 🌸)</button>
-        </div>
 
-        <!-- Task 2: Daily Bonus Check-in -->
-        <div class="task-card">
-            <div class="task-info">
-                <h3>Daily Check-in Bonus</h3>
-                <p>Claim your free daily reward of +215 Flowers</p>
+            <!-- AD #2 -->
+            <div class="ad-card" id="cardAd2">
+                <div>
+                    <div class="ad-header">
+                        <span class="ad-title">Ad #2</span>
+                        <span class="ad-counter" id="count2">0/5</span>
+                    </div>
+                    <div class="ad-reward">🌸 50</div>
+                </div>
+                <button class="ad-btn" id="btnAd2" onclick="watchAd(2)">WATCH</button>
             </div>
-            <button class="task-btn" id="dailyBonusBtn" onclick="claimDailyBonus()">CLAIM (+215 🌸)</button>
-        </div>
 
-        <!-- Task 3: Play Flower Catcher Game -->
-        <div class="task-card">
-            <div class="task-info">
-                <h3>Play Game Session</h3>
-                <p>Catch flowers in the mini-game to earn up to +450 Flowers</p>
+            <!-- AD #3 -->
+            <div class="ad-card" id="cardAd3">
+                <div>
+                    <div class="ad-header">
+                        <span class="ad-title">Ad #3</span>
+                        <span class="ad-counter" id="count3">0/5</span>
+                    </div>
+                    <div class="ad-reward">🌸 50</div>
+                </div>
+                <button class="ad-btn" id="btnAd3" onclick="watchAd(3)">WATCH</button>
             </div>
-            <a href="game.html" class="task-btn" style="text-decoration: none; text-align: center;">PLAY NOW</a>
+
+            <!-- AD #4 -->
+            <div class="ad-card" id="cardAd4">
+                <div>
+                    <div class="ad-header">
+                        <span class="ad-title">Ad #4</span>
+                        <span class="ad-counter" id="count4">0/5</span>
+                    </div>
+                    <div class="ad-reward">🌸 50</div>
+                </div>
+                <button class="ad-btn" id="btnAd4" onclick="watchAd(4)">WATCH</button>
+            </div>
         </div>
     </div>
 
-    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
-        <a href="index.html" class="nav-item">
-            <span class="nav-icon">🏠</span> HOME
-        </a>
-        <a href="earn.html" class="nav-item active">
-            <span class="nav-icon">⚡</span> EARN
-        </a>
-        <a href="game.html" class="nav-item">
-            <span class="nav-icon">⭐</span> PLAY
-        </a>
-        <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span> FRIENDS
-        </a>
-        <a href="wallet.html" class="nav-item">
-            <span class="nav-icon">👤</span> ME
-        </a>
+        <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> HOME</a>
+        <a href="earn.html" class="nav-item active"><span class="nav-icon">⚡</span> EARN</a>
+        <a href="game.html" class="nav-item"><span class="nav-icon">⭐</span> PLAY</a>
+        <a href="friends.html" class="nav-item"><span class="nav-icon">👥</span> FRIENDS</a>
+        <a href="wallet.html" class="nav-item"><span class="nav-icon">👤</span> ME</a>
     </div>
 
     <script>
-        const monetagUrl = "https://omg10.com/your-smart-link-id"; // Replace with your Monetag link
-        const maxDailyCap = 715;
+        // Mapping each ad slot to your individual links
+        const adLinks = {
+            1: "https://omg10.com/4/11910761",
+            2: "https://omg10.com/4/11496906",
+            3: "https://omg10.com/4/11910754",
+            4: "https://omg10.com/4/11505493"
+        };
 
-        function getTodayKey() {
-            return 'earned_' + new Date().toISOString().slice(0, 10);
+        const maxPerAd = 5; // Limit per ad link daily
+
+        function getTodayKey(adId) {
+            return `ad_${adId}_count_` + new Date().toISOString().slice(0, 10);
         }
 
-        function updateDisplay() {
-            const todayKey = getTodayKey();
-            const earnedToday = Number(localStorage.getItem(todayKey) || 0);
-            const timeLeft = Math.max(0, maxDailyCap - earnedToday);
+        window.addEventListener('DOMContentLoaded', () => {
+            updateUI();
+        });
 
-            document.getElementById('todayEarned').innerText = `${earnedToday} Flowers`;
-            document.getElementById('dailyLimitLeft').innerText = `${timeLeft} Flowers`;
+        function updateUI() {
+            for (let i = 1; i <= 4; i++) {
+                const key = getTodayKey(i);
+                const currentViews = Number(localStorage.getItem(key) || 0);
+                
+                document.getElementById(`count${i}`).innerText = `${currentViews}/${maxPerAd}`;
 
-            if (earnedToday >= maxDailyCap) {
-                document.getElementById('adTaskBtn').disabled = true;
-                document.getElementById('adTaskBtn').innerText = "LIMIT REACHED";
+                if (currentViews >= maxPerAd) {
+                    const btn = document.getElementById(`btnAd1` + (i === 1 ? '' : i)); // fixed selector below
+                    document.getElementById(`btnAd${i}`).innerText = "COMPLETED";
+                    document.getElementById(`btnAd${i}`).disabled = true;
+                }
             }
         }
 
-        window.addEventListener('DOMContentLoaded', updateDisplay);
+        function watchAd(adId) {
+            const key = getTodayKey(adId);
+            let currentViews = Number(localStorage.getItem(key) || 0);
 
-        function completeAdTask() {
-            const todayKey = getTodayKey();
-            let earnedToday = Number(localStorage.getItem(todayKey) || 0);
-
-            if (earnedToday >= maxDailyCap) {
-                alert("You have reached your daily earning cap! Come back tomorrow to continue.");
+            if (currentViews >= maxPerAd) {
+                alert("You have reached the daily limit for this ad!");
                 return;
             }
 
-            // Open Monetag link
-            window.open(monetagUrl, '_blank');
-
-            // Add reward and verified view count
-            let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
-            let currentViews = Number(localStorage.getItem('monetag_verified_views') || 0);
-
-            currentBalance += 50;
-            earnedToday += 50;
+            // Increment views and balance
             currentViews += 1;
-
-            localStorage.setItem('flowerBalance', currentBalance);
-            localStorage.setItem(todayKey, earnedToday);
-            localStorage.setItem('monetag_verified_views', currentViews);
-
-            updateDisplay();
-            alert("Reward claimed! +50 Flowers added to your balance.");
-        }
-
-        function claimDailyBonus() {
-            const bonusKey = 'bonus_claimed_' + new Date().toISOString().slice(0, 10);
-            if (localStorage.getItem(bonusKey)) {
-                alert("You have already claimed your daily bonus today!");
-                document.getElementById('dailyBonusBtn').disabled = true;
-                document.getElementById('dailyBonusBtn').innerText = "CLAIMED";
-                return;
-            }
+            localStorage.setItem(key, currentViews);
 
             let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
-            currentBalance += 215;
-
+            currentBalance += 50;
             localStorage.setItem('flowerBalance', currentBalance);
-            localStorage.setItem(bonusKey, 'true');
-            
-            document.getElementById('dailyBonusBtn').disabled = true;
-            document.getElementById('dailyBonusBtn').innerText = "CLAIMED";
-            alert("Success! +215 Daily Bonus Flowers added.");
+
+            updateUI();
+
+            // Open the specific link for this ad slot
+            window.open(adLinks[adId], '_blank');
         }
     </script>
 </body>
