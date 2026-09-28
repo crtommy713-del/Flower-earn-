@@ -1,29 +1,33 @@
 import { syncTelegramUser, addFlowersToDatabase } from './db.js';
 
-// Run immediately since module scripts are deferred automatically
 async function initApp() {
     const balanceEl = document.getElementById('flowerBalance');
     const claimBtn = document.getElementById('claimBtn');
 
-    // Load user balance from Firestore on startup
-    const userData = await syncTelegramUser();
-    if (balanceEl) {
-        balanceEl.innerText = userData.balance !== undefined ? userData.balance : 361;
+    try {
+        const userData = await syncTelegramUser();
+        if (balanceEl) {
+            balanceEl.innerText = userData && userData.balance !== undefined ? userData.balance : 361;
+        }
+    } catch (err) {
+        console.error("Initialization error:", err);
+        if (balanceEl) {
+            balanceEl.innerText = "Error: " + err.message;
+        }
     }
 
-    // Claim reward action
     if (claimBtn) {
         claimBtn.addEventListener('click', async () => {
-            claimBtn.innerText = "Saving...";
-            claimBtn.disabled = true;
-
-            await addFlowersToDatabase(50);
-
-            if (window.Telegram?.WebApp?.HapticFeedback) {
-                window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+            try {
+                claimBtn.innerText = "Saving...";
+                claimBtn.disabled = true;
+                await addFlowersToDatabase(50);
+                location.reload();
+            } catch (err) {
+                alert("Action failed: " + err.message);
+                claimBtn.innerText = "Claim Daily +50 Flowers";
+                claimBtn.disabled = false;
             }
-
-            location.reload();
         });
     }
 }
