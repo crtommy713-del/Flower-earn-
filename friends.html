@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flower Earn - Friends & Invite</title>
+    <!-- Telegram WebApp SDK -->
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
     <style>
         * {
             margin: 0;
@@ -48,21 +50,21 @@
             padding: 20px;
             border: 1px solid #334155;
             margin-bottom: 20px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
             text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
         }
         .card h3 {
+            font-size: 0.95rem;
             color: #fbbf24;
             margin-bottom: 10px;
-            font-size: 1.1rem;
         }
         .card p {
-            font-size: 0.9rem;
-            color: #cbd5e1;
+            font-size: 0.85rem;
+            color: #94a3b8;
             margin-bottom: 15px;
             line-height: 1.4;
         }
-        .invite-btn {
+        .share-btn {
             width: 100%;
             padding: 14px;
             background: #fbbf24;
@@ -70,37 +72,37 @@
             border: none;
             border-radius: 12px;
             font-weight: bold;
-            font-size: 1rem;
+            font-size: 0.95rem;
             cursor: pointer;
             box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
-            transition: background 0.2s;
         }
-        .invite-btn:active {
+        .share-btn:active {
             background: #d97706;
         }
-        .stats-row {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
         }
         .stat-box {
             background: #0f172a;
-            padding: 12px;
-            border-radius: 10px;
             border: 1px solid #334155;
-            width: 45%;
+            border-radius: 12px;
+            padding: 15px;
+            text-align: center;
         }
         .stat-box span {
             display: block;
             font-size: 0.75rem;
             color: #94a3b8;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 5px;
         }
-        .stat-box strong {
-            font-size: 1.2rem;
-            color: #fbbf24;
+        .stat-box h2 {
+            font-size: 1.5rem;
+            color: #ffffff;
         }
-        /* Standard Navigation Bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -139,63 +141,117 @@
     </div>
 
     <div class="container">
-        <!-- Referral Action Card -->
         <div class="card">
             <h3>Invite Your Friends</h3>
             <p>Share your unique referral link with friends on Telegram. Earn bonus flowers every time they join and complete tasks!</p>
-            <button class="invite-btn" onclick="shareInviteLink()">SHARE INVITE LINK</button>
+            <button class="share-btn" onclick="shareInviteLink()">SHARE INVITE LINK</button>
         </div>
 
-        <!-- Referral Stats Card -->
         <div class="card">
             <h3>Your Referral Statistics</h3>
-            <div class="stats-row">
+            <div class="stats-grid">
                 <div class="stat-box">
                     <span>Total Invited</span>
-                    <strong id="invitedCount">0</strong>
+                    <h2 id="totalInvited">0</h2>
                 </div>
                 <div class="stat-box">
                     <span>Bonus Earned</span>
-                    <strong id="referralEarnings">0 🌸</strong>
+                    <h2 id="bonusEarned">0 🌸</h2>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
-        <a href="index.html" class="nav-item">
-            <span class="nav-icon">🏠</span> HOME
-        </a>
-        <a href="earn.html" class="nav-item">
-            <span class="nav-icon">⚡</span> EARN
-        </a>
-        <a href="game.html" class="nav-item">
-            <span class="nav-icon">⭐</span> PLAY
-        </a>
-        <a href="friends.html" class="nav-item active">
-            <span class="nav-icon">👥</span> FRIENDS
-        </a>
-        <a href="wallet.html" class="nav-item">
-            <span class="nav-icon">👤</span> ME
-        </a>
+        <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> HOME</a>
+        <a href="earn.html" class="nav-item"><span class="nav-icon">⚡</span> EARN</a>
+        <a href="game.html" class="nav-item"><span class="nav-icon">⭐</span> PLAY</a>
+        <a href="friends.html" class="nav-item active"><span class="nav-icon">👥</span> FRIENDS</a>
+        <a href="wallet.html" class="nav-item"><span class="nav-icon">👤</span> ME</a>
     </div>
 
     <script>
+        // Initialize Telegram Web App
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Get actual Telegram User ID or fallback to a device-generated ID if tested outside Telegram
+        function getUserId() {
+            if (tg.initDataUnsafe && tg.initDataUnsafe.user && tg.initDataUnsafe.user.id) {
+                return tg.initDataUnsafe.user.id.toString();
+            }
+            // Fallback for browser testing
+            let localId = localStorage.getItem('flower_device_id');
+            if (!localId) {
+                localId = 'web_' + Math.floor(100000 + Math.random() * 900000);
+                localStorage.setItem('flower_device_id', localId);
+            }
+            return localId;
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateStatsDisplay();
+            checkIncomingReferral();
+        });
+
+        function updateStatsDisplay() {
+            const count = localStorage.getItem('flower_referrals_count') || '0';
+            const bonus = localStorage.getItem('flower_referral_bonus') || '0';
+
+            document.getElementById('totalInvited').innerText = count;
+            document.getElementById('bonusEarned').innerText = `${Number(bonus).toLocaleString()} 🌸`;
+        }
+
         function shareInviteLink() {
-            const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
-            const userId = tgUser ? tgUser.id : "12345";
-            const botUsername = "flowerearn_bot"; // Update with your actual bot username if needed
-            const inviteUrl = `https://t.me/${botUsername}?start=ref_${userId}`;
+            const myUserId = getUserId();
+            // Replace 'FlowerEarnBot' with your actual Telegram Bot username
+            const inviteUrl = `https://t.me/FlowerEarnBot?start=ref_${myUserId}`;
 
             if (navigator.share) {
                 navigator.share({
                     title: 'Flower Earn',
-                    text: 'Join Flower Earn and start earning flowers and cash rewards right inside Telegram!',
+                    text: 'Join Flower Earn and start earning daily rewards with me!',
                     url: inviteUrl,
-                }).catch(err => console.log('Share canceled', err));
+                }).catch(() => {});
             } else {
-                prompt("Copy your referral link:", inviteUrl);
+                navigator.clipboard.writeText(inviteUrl);
+                alert("Unique invite link copied to clipboard:\n" + inviteUrl);
+            }
+        }
+
+        // Real validation check on load
+        function checkIncomingReferral() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const startParam = urlParams.get('start'); // e.g. ref_12345678
+
+            if (startParam && startParam.startsWith('ref_')) {
+                const referrerId = startParam.replace('ref_', '');
+                const currentUserId = getUserId();
+
+                // Rule 1: Prevent self-referral
+                if (referrerId === currentUserId) {
+                    return; 
+                }
+
+                // Rule 2: Check if this user was already referred on this device/account
+                const hasBeenReferred = localStorage.getItem('flower_already_referred');
+                if (hasBeenReferred) {
+                    return;
+                }
+
+                // Mark as referred so they can't trigger it again
+                localStorage.setItem('flower_already_referred', 'true');
+
+                // Give reward logic (In production, this should update your backend database)
+                let currentCount = Number(localStorage.getItem('flower_referrals_count') || 0) + 1;
+                let currentBonus = Number(localStorage.getItem('flower_referral_bonus') || 0) + 100;
+                let currentBalance = Number(localStorage.getItem('flowerBalance') || 761) + 100;
+
+                localStorage.setItem('flower_referrals_count', currentCount);
+                localStorage.setItem('flower_referral_bonus', currentBonus);
+                localStorage.setItem('flowerBalance', currentBalance);
+
+                updateStatsDisplay();
             }
         }
     </script>
