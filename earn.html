@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flower Earn - Earn Hub</title>
     
-    <!-- Monetag Rewarded Interstitial SDK Script -->
+    <!-- Monetag SDK Script Tag -->
     <script src="https://alwingulla.com/88/tag.min.js" data-zone="11911077" async data-cfasync="false"></script>
 
     <style>
@@ -226,7 +226,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             updateUI();
-            setInterval(updateUI, 1000); // Update timers every second
+            setInterval(updateUI, 1000); // Live update timers every second
         });
 
         function updateUI() {
@@ -243,16 +243,15 @@
                 const btn = document.getElementById(`btnAd${i}`);
 
                 if (currentViews >= maxPerAd) {
-                    // Check if 4 hours have passed since the cooldown started
                     if (now >= cooldownUntil) {
-                        // Reset count after 4 hours expire
+                        // Cooldown expired, reset the slot
                         localStorage.setItem(viewsKey, '0');
                         localStorage.setItem(cooldownKey, '0');
                         btn.innerText = "WATCH";
                         btn.disabled = false;
                         document.getElementById(`count${i}`).innerText = `0/${maxPerAd}`;
                     } else {
-                        // Show live countdown timer
+                        // Show active countdown timer
                         const distance = cooldownUntil - now;
                         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -278,30 +277,43 @@
                 return;
             }
 
-            // Check if Monetag SDK function is loaded
+            // Direct fallback links for each ad slot
+            const fallbackLinks = {
+                1: "https://omg10.com/4/11910761",
+                2: "https://omg10.com/4/11496906",
+                3: "https://omg10.com/4/11910754",
+                4: "https://omg10.com/4/11505493"
+            };
+
+            const grantRewardAndOpenAd = () => {
+                currentViews += 1;
+                localStorage.setItem(viewsKey, currentViews);
+
+                if (currentViews >= maxPerAd) {
+                    const cooldownExpiry = new Date().getTime() + cooldownTimeMs;
+                    localStorage.setItem(cooldownKey, cooldownExpiry);
+                }
+
+                let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
+                currentBalance += 50;
+                localStorage.setItem('flowerBalance', currentBalance);
+
+                updateUI();
+                alert('You have seen an ad! +50 Flowers added.');
+            };
+
+            // Try Monetag SDK first; seamlessly fall back to direct links if loading or blocked
             if (typeof show_11911077 === 'function') {
                 show_11911077().then(() => {
-                    currentViews += 1;
-                    localStorage.setItem(viewsKey, currentViews);
-
-                    // If they just hit the max limit (5/5), start the 4-hour countdown clock
-                    if (currentViews >= maxPerAd) {
-                        const cooldownExpiry = new Date().getTime() + cooldownTimeMs;
-                        localStorage.setItem(cooldownKey, cooldownExpiry);
-                    }
-
-                    let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
-                    currentBalance += 50;
-                    localStorage.setItem('flowerBalance', currentBalance);
-
-                    updateUI();
-                    alert('You have seen an ad! +50 Flowers added.');
+                    grantRewardAndOpenAd();
                 }).catch((error) => {
-                    console.log("Ad closed or failed", error);
-                    alert("Ad was skipped or failed to load. Please try again.");
+                    console.log("SDK ad failed, opening fallback link", error);
+                    window.open(fallbackLinks[adId], '_blank');
+                    grantRewardAndOpenAd();
                 });
             } else {
-                alert("Ad SDK is still loading. Please wait a second and try again.");
+                window.open(fallbackLinks[adId], '_blank');
+                grantRewardAndOpenAd();
             }
         }
     </script>
