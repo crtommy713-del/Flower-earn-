@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Earn - Home</title>
+    <title>Flower Earn Bot</title>
     
     <!-- Telegram WebApp SDK -->
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -13,119 +13,285 @@
             box-sizing: border-box;
             margin: 0;
             padding: 0;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background-color: #0f172a;
+            background: linear-gradient(135deg, #041008 0%, #082414 100%);
             color: #f8fafc;
-            display: flex;
-            flex-direction: column;
             min-height: 100vh;
-            padding-bottom: 70px;
+            padding-bottom: 90px;
         }
         .container {
+            padding: 16px;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        
+        /* Top Balance Card */
+        .balance-card {
+            background: linear-gradient(145deg, rgba(13, 40, 24, 0.9), rgba(6, 22, 13, 0.9));
+            border: 1px solid rgba(82, 183, 136, 0.3);
+            border-radius: 20px;
             padding: 20px;
-            text-align: center;
-            flex: 1;
-        }
-        h1 {
-            color: #38bdf8;
-            margin-bottom: 5px;
-            font-size: 24px;
-        }
-        .subtitle {
-            color: #94a3b8;
-            font-size: 14px;
-            margin-bottom: 25px;
-        }
-        .card {
-            background: #1e293b;
-            padding: 20px;
-            border-radius: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            margin-bottom: 20px;
-            border: 1px solid #334155;
+            position: relative;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
+            margin-bottom: 16px;
+            overflow: hidden;
         }
         .balance-title {
-            font-size: 14px;
-            color: #94a3b8;
+            font-size: 11px;
+            color: #74c69d;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            margin-bottom: 4px;
             text-transform: uppercase;
-            letter-spacing: 1px;
+        }
+        .balance-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
         }
         .balance-amount {
-            font-size: 40px;
+            font-size: 36px;
             font-weight: 800;
-            color: #4ade80;
-            margin: 10px 0;
+            color: #52b788;
+            letter-spacing: -0.5px;
         }
-        .btn {
-            background-color: #38bdf8;
-            color: #0f172a;
-            border: none;
-            padding: 14px 24px;
-            font-size: 16px;
+        .token-info {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 8px;
+        }
+        .token-badge {
+            background: rgba(82, 183, 136, 0.15);
+            color: #74c69d;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .usd-badge {
+            background: rgba(16, 185, 129, 0.2);
+            color: #34d399;
+            font-size: 11px;
+            padding: 3px 8px;
+            border-radius: 6px;
+            font-weight: 600;
+        }
+        .clover-icon {
+            font-size: 45px;
+            filter: drop-shadow(0 0 10px rgba(82, 183, 136, 0.4));
+        }
+
+        /* Action Buttons Grid */
+        .action-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 16px;
+        }
+        .action-btn {
+            background: linear-gradient(135deg, #1b4332 0%, #081c15 100%);
+            border: 1px solid rgba(82, 183, 136, 0.4);
+            color: #ffffff;
+            padding: 14px;
+            border-radius: 14px;
+            font-size: 13px;
             font-weight: 700;
-            border-radius: 12px;
+            text-align: center;
             cursor: pointer;
-            width: 100%;
-            max-width: 300px;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.2);
-            transition: transform 0.1s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            transition: all 0.2s ease;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
-        .btn:active {
+        .action-btn:active {
             transform: scale(0.97);
+            background: #2d6a4f;
         }
+
+        /* Task & Feature Cards */
+        .card-section-title {
+            font-size: 12px;
+            color: #74c69d;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin: 20px 0 10px 4px;
+            font-weight: 700;
+        }
+        .task-card {
+            background: rgba(14, 43, 26, 0.6);
+            border: 1px solid rgba(82, 183, 136, 0.25);
+            border-radius: 16px;
+            padding: 16px;
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            transition: border-color 0.2s;
+        }
+        .task-card:active {
+            border-color: #52b788;
+        }
+        .task-left {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+        .task-icon {
+            font-size: 26px;
+            background: rgba(82, 183, 136, 0.1);
+            padding: 10px;
+            border-radius: 12px;
+            border: 1px solid rgba(82, 183, 136, 0.2);
+        }
+        .task-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #f1f5f9;
+            margin-bottom: 3px;
+        }
+        .task-desc {
+            font-size: 11px;
+            color: #94a3b8;
+        }
+        .arrow {
+            color: #74c69d;
+            font-size: 16px;
+            font-weight: bold;
+        }
+
         /* Bottom Navigation Bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: #1e293b;
+            background: rgba(6, 22, 13, 0.95);
+            backdrop-filter: blur(12px);
             display: flex;
             justify-content: space-around;
-            padding: 12px 0;
-            border-top: 1px solid #334155;
-            box-shadow: 0 -4px 10px rgba(0,0,0,0.2);
+            padding: 10px 0 16px 0;
+            border-top: 1px solid rgba(82, 183, 136, 0.2);
+            z-index: 100;
         }
         .nav-item {
-            color: #94a3b8;
+            color: #64748b;
             text-decoration: none;
-            font-size: 12px;
+            font-size: 10px;
             text-align: center;
             font-weight: 600;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 3px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
         .nav-item.active {
-            color: #38bdf8;
+            color: #52b788;
+        }
+        .nav-icon {
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <h1>Flower Earn</h1>
-        <p class="subtitle">Welcome to your dashboard</p>
-
-        <div class="card">
-            <div class="balance-title">Your Balance</div>
-            <div id="flowerBalance" class="balance-amount">Loading...</div>
+        <!-- Top Balance Card -->
+        <div class="balance-card">
+            <div class="balance-title">Total Balance</div>
+            <div class="balance-row">
+                <div>
+                    <div id="flowerBalance" class="balance-amount">361</div>
+                    <div class="token-info">
+                        <span class="token-badge">🍀 FLOWER</span>
+                        <span id="usdValue" class="usd-badge">$0.0072</span>
+                    </div>
+                </div>
+                <div class="clover-icon">🍀</div>
+            </div>
         </div>
 
-        <button id="claimBtn" class="btn">Claim Daily +50 Flowers</button>
+        <!-- Action Buttons -->
+        <div class="action-grid">
+            <button id="claimBtn" class="action-btn">
+                <span>⚡</span> Claim +50
+            </button>
+            <button class="action-btn" onclick="alert('Withdrawal feature coming soon!')">
+                <span>📥</span> Withdraw
+            </button>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="card-section-title">Exclusive Tasks</div>
+        
+        <div class="task-card" onclick="alert('Telegram Stars task selected!')">
+            <div class="task-left">
+                <div class="task-icon">⭐</div>
+                <div>
+                    <div class="task-title">Mine Telegram Stars</div>
+                    <div class="task-desc">Pick a gift, mine it → claim real gifts</div>
+                </div>
+            </div>
+            <div class="arrow">›</div>
+        </div>
+
+        <div class="task-card" onclick="alert('Quick task selected!')">
+            <div class="task-left">
+                <div class="task-icon">⚡</div>
+                <div>
+                    <div class="task-title">Quick Tasks</div>
+                    <div class="task-desc">One task at a time — links, sites</div>
+                </div>
+            </div>
+            <div class="arrow">›</div>
+        </div>
+
+        <div class="card-section-title">Watch & Earn</div>
+        
+        <div class="task-card" onclick="alert('Ad task selected!')">
+            <div class="task-left">
+                <div class="task-icon">👀</div>
+                <div>
+                    <div class="task-title">Ad #1 (0/7)</div>
+                    <div class="task-desc">Earn +200 Flowers</div>
+                </div>
+            </div>
+            <div class="arrow">›</div>
+        </div>
     </div>
 
     <!-- Bottom Navigation Bar -->
     <div class="nav-bar">
-        <a href="index.html" class="nav-item active">🏠 Home</a>
-        <a href="earn.html" class="nav-item">🎯 Earn</a>
-        <a href="wallet.html" class="nav-item">💰 Wallet</a>
-        <a href="friends.html" class="nav-item">👥 Friends</a>
+        <a href="index.html" class="nav-item active">
+            <span class="nav-icon">🏠</span> Home
+        </a>
+        <a href="earn.html" class="nav-item">
+            <span class="nav-icon">⚡</span> Earn
+        </a>
+        <a href="game.html" class="nav-item">
+            <span class="nav-icon">🍀</span> Play
+        </a>
+        <a href="friends.html" class="nav-item">
+            <span class="nav-icon">👥</span> Friends
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <span class="nav-icon">👤</span> Me
+        </a>
     </div>
 
     <!-- Firebase SDK & Application Logic -->
     <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+        import { getFirestore, doc, getDoc, setDoc, runTransaction, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyC9C-bNkvpueC3qK2TxOlPU_goLavCQiBk",
@@ -140,12 +306,16 @@
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
 
-        async function syncTelegramUser() {
+        async function initApp() {
+            const balanceEl = document.getElementById('flowerBalance');
+            const usdEl = document.getElementById('usdValue');
+            const claimBtn = document.getElementById('claimBtn');
+
             try {
                 let userId = "7927840249";
                 let username = "DemoUser";
 
-                if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.initDataUnsafe && window.Telegram.WebApp.initDataUnsafe.user) {
+                if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
                     const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
                     userId = String(tgUser.id);
                     username = tgUser.username || tgUser.first_name || "TelegramUser";
@@ -154,68 +324,46 @@
                 const userRef = doc(db, "users", userId);
                 let docSnap = await getDoc(userRef);
                 
+                let balance = 361;
                 if (!docSnap.exists()) {
-                    const initialData = {
+                    await setDoc(userRef, {
                         telegramId: userId,
                         username: username,
                         balance: 361,
                         createdAt: serverTimestamp()
-                    };
-                    await setDoc(userRef, initialData);
-                    return initialData;
+                    });
                 } else {
-                    return docSnap.data();
+                    balance = docSnap.data().balance ?? 361;
+                }
+
+                if (balanceEl) balanceEl.innerText = balance;
+                if (usdEl) usdEl.innerText = "$" + (balance * 0.00002).toFixed(4);
+
+                if (claimBtn) {
+                    claimBtn.addEventListener('click', async () => {
+                        claimBtn.innerText = "Saving...";
+                        claimBtn.disabled = true;
+
+                        await runTransaction(db, async (transaction) => {
+                            const currentSnap = await transaction.get(userRef);
+                            const curBal = currentSnap.exists() ? (currentSnap.data().balance || 361) : 361;
+                            transaction.set(userRef, { balance: curBal + 50 }, { merge: true });
+                        });
+
+                        if (window.Telegram?.WebApp?.HapticFeedback) {
+                            window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
+                        }
+
+                        location.reload();
+                    });
                 }
             } catch (error) {
-                console.error("Error syncing user data:", error);
-                return { balance: 361 };
+                console.error("Database sync error:", error);
+                if (balanceEl) balanceEl.innerText = "361";
             }
         }
 
-        async function addFlowersToDatabase(amount) {
-            try {
-                let userId = "7927840249";
-                if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-                    userId = String(window.Telegram.WebApp.initDataUnsafe.user.id);
-                }
-                const userRef = doc(db, "users", userId);
-
-                await runTransaction(db, async (transaction) => {
-                    const docSnap = await transaction.get(userRef);
-                    let currentBalance = 361;
-                    if (docSnap.exists() && docSnap.data().balance !== undefined) {
-                        currentBalance = docSnap.data().balance;
-                    }
-                    transaction.set(userRef, { balance: currentBalance + amount }, { merge: true });
-                });
-            } catch (error) {
-                console.error("Failed to update balance:", error);
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', async () => {
-            const balanceEl = document.getElementById('flowerBalance');
-            const claimBtn = document.getElementById('claimBtn');
-
-            const userData = await syncTelegramUser();
-            if (balanceEl) {
-                balanceEl.innerText = userData.balance !== undefined ? userData.balance : 361;
-            }
-
-            if (claimBtn) {
-                claimBtn.addEventListener('click', async () => {
-                    claimBtn.innerText = "Saving...";
-                    claimBtn.disabled = true;
-                    await addFlowersToDatabase(50);
-                    
-                    if (window.Telegram?.WebApp?.HapticFeedback) {
-                        window.Telegram.WebApp.HapticFeedback.notificationOccurred('success');
-                    }
-
-                    location.reload();
-                });
-            }
-        });
+        initApp();
     </script>
 </body>
 </html>
