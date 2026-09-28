@@ -138,6 +138,65 @@
             font-size: 0.8rem;
             color: #94a3b8;
         }
+
+        /* Channel Gate Modal Overlay */
+        #channelGateModal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(15, 23, 42, 0.95);
+            z-index: 9999;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .gate-card {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 20px;
+            padding: 30px 20px;
+            text-align: center;
+            max-width: 400px;
+            width: 100%;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+        }
+        .gate-card h2 {
+            color: #fbbf24;
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        .gate-card p {
+            color: #94a3b8;
+            font-size: 0.9rem;
+            margin-bottom: 20px;
+            line-height: 1.4;
+        }
+        .gate-btn {
+            display: block;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 0.95rem;
+            text-decoration: none;
+            text-align: center;
+            cursor: pointer;
+            border: none;
+            margin-bottom: 12px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+        }
+        .btn-join {
+            background: #2563eb;
+            color: #ffffff;
+        }
+        .btn-verify {
+            background: #10b981;
+            color: #ffffff;
+        }
+
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -169,6 +228,22 @@
     </style>
 </head>
 <body>
+
+    <!-- Channel Gateway Modal -->
+    <div id="channelGateModal">
+        <div class="gate-card">
+            <h2>🌸 Join Payout Proofs</h2>
+            <p>You must join our official Telegram channel to view payment proofs and unlock the app.</p>
+            
+            <a href="https://t.me/FlowerEarnPayouts" target="_blank" class="gate-btn btn-join">
+                📢 1. JOIN CHANNEL
+            </a>
+            
+            <button class="gate-btn btn-verify" onclick="verifyChannelJoin()">
+                ✅ 2. I'VE JOINED - CONTINUE
+            </button>
+        </div>
+    </div>
 
     <div class="header">
         <h1>Flower Earn Bot</h1>
@@ -216,13 +291,22 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
+            const hasJoined = localStorage.getItem('joined_proof_channel');
+            if (hasJoined === 'true') {
+                document.getElementById('channelGateModal').style.display = 'none';
+            }
+
             const savedBalance = localStorage.getItem('flowerBalance') || '761';
             document.getElementById('flowerCount').innerText = Number(savedBalance).toLocaleString();
             
-            // Updated Exchange Rate: 10 Flowers = ₦1 (5,000 Flowers = ₦500)
             const nairaValue = (Number(savedBalance) / 10).toFixed(2);
             document.getElementById('nairaBalance').innerText = `₦${Number(nairaValue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
         });
+
+        function verifyChannelJoin() {
+            localStorage.setItem('joined_proof_channel', 'true');
+            document.getElementById('channelGateModal').style.display = 'none';
+        }
 
         function handleEarnAdClick() {
             const todayKey = getTodayKey();
