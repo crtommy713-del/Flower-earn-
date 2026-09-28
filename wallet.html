@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flower Earn - Wallet & Payouts</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .wallet-card {
+            background: linear-gradient(135deg, #101726 0%, #0a0e17 100%);
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            margin-bottom: 16px;
+        }
+        .input-group {
+            margin-bottom: 14px;
+        }
+        .input-group label {
+            display: block;
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 6px;
+            letter-spacing: 0.5px;
+        }
+        .input-group input {
+            width: 100%;
+            background: #07090f;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 12px;
+            color: #ffffff;
+            font-size: 14px;
+            outline: none;
+        }
+        .input-group input:focus {
+            border-color: #38bdf8;
+        }
+        .withdraw-btn {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
+            margin-top: 6px;
+        }
+        .history-title {
+            font-size: 13px;
+            font-weight: 700;
+            color: #94a3b8;
+            margin-bottom: 10px;
+            letter-spacing: 0.5px;
+        }
+        .history-item {
+            background: linear-gradient(135deg, #0d1322 0%, #080c14 100%);
+            border: 1px solid #1a2333;
+            border-radius: 12px;
+            padding: 12px 14px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            font-size: 13px;
+        }
+        .status-pending {
+            color: #f59e0b;
+            font-weight: 700;
+            font-size: 11px;
+            background: #2a1f0f;
+            padding: 4px 8px;
+            border-radius: 6px;
+            border: 1px solid #78350f;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <div class="header-card">
+            <h2>📥 Withdraw Funds</h2>
+            <p>Convert your Flowers into real crypto rewards.</p>
+        </div>
+
+        <!-- Withdrawal Form Card -->
+        <div class="wallet-card">
+            <div class="input-group">
+                <label>BEP20 / USDT WALLET ADDRESS</label>
+                <input type="text" id="walletAddress" placeholder="0x... BEP20 address">
+            </div>
+
+            <div class="input-group">
+                <label>AMOUNT TO WITHDRAW (FLOWERS)</label>
+                <input type="number" id="withdrawAmount" placeholder="Min. 5000 Flowers">
+            </div>
+
+            <button class="withdraw-btn" onclick="requestWithdrawal()">SUBMIT WITHDRAWAL</button>
+        </div>
+
+        <!-- Recent Withdrawals History -->
+        <div class="history-title">RECENT WITHDRAWALS</div>
+        <div class="history-list">
+            <div class="history-item">
+                <div>
+                    <div style="font-weight: 700; color: #f8fafc;">5,348 Flowers</div>
+                    <div style="font-size: 11px; color: #64748b;">$0.1070 (BEP20) • Just now</div>
+                </div>
+                <span class="status-pending">PENDING</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>HOME</span>
+        </a>
+        <a href="earn.html" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>EARN</span>
+        </a>
+        <a href="game.html" class="nav-item play-tab">
+            <span class="nav-icon">💎</span>
+            <span>PLAY</span>
+        </a>
+        <a href="friends.html" class="nav-item">
+            <span class="nav-icon">👥</span>
+            <span>FRIENDS</span>
+        </a>
+        <a href="wallet.html" class="nav-item active">
+            <span class="nav-icon">👤</span>
+            <span>ME</span>
+        </a>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        function requestWithdrawal() {
+            const address = document.getElementById('walletAddress').value.trim();
+            const amount = document.getElementById('withdrawAmount').value;
+
+            if (!address || !address.startsWith('0x')) {
+                alert('Please enter a valid BEP20 wallet address starting with 0x.');
+                return;
+            }
+
+            if (!amount || amount < 5000) {
+                alert('Minimum withdrawal threshold is 5,000 Flowers.');
+                return;
+            }
+
+            if (tg.HapticFeedback) {
+                tg.HapticFeedback.notificationOccurred('success');
+            }
+
+            alert(`Withdrawal request for ${amount} Flowers submitted successfully! It will be reviewed and sent to your reserve payout queue.`);
+            document.getElementById('withdrawAmount').value = '';
+        }
+    </script>
+</body>
+</html>

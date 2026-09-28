@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Earn - Tasks</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="container">
+        <h1>Earn Flowers</h1>
+        <p class="subtitle">Complete tasks to grow your stack</p>
+
+        <div class="card" style="display: flex; justify-content: space-between; align-items: center;">
+            <div style="text-align: left;">
+                <h3 style="color: #f8fafc; font-size: 16px;">Play Game Session</h3>
+                <p style="color: #94a3b8; font-size: 12px;">+100 Flowers</p>
+            </div>
+            <button id="taskBtn" class="btn" style="width: auto; padding: 10px 16px; font-size: 14px;">Start</button>
+        </div>
+    </div>
+
+    <div class="nav-bar">
+        <a href="index.html" class="nav-item">🏠 Home</a>
+        <a href="earn.html" class="nav-item active">🎯 Earn</a>
+        <a href="wallet.html" class="nav-item">💰 Wallet</a>
+        <a href="friends.html" class="nav-item">👥 Friends</a>
+    </div>
+
+    <script type="module">
+        import { addFlowersToDatabase } from './db.js';
+
+        const taskBtn = document.getElementById('taskBtn');
+        if (taskBtn) {
+            taskBtn.addEventListener('click', async () => {
+                taskBtn.innerText = "Claiming...";
+                await addFlowersToDatabase(100);
+                alert("Task completed! +100 flowers added.");
+                window.location.href = "index.html";
+            });
+        }
+    </script>
+</body>
+</html>

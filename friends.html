@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Flower Earn - Invite Friends</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        .referral-card {
+            background: linear-gradient(135deg, #101726 0%, #0a0e17 100%);
+            border: 1px solid #1e293b;
+            border-radius: 16px;
+            padding: 20px;
+            text-align: center;
+            margin-bottom: 16px;
+        }
+        .referral-card h3 {
+            color: #38bdf8;
+            margin-top: 0;
+            margin-bottom: 8px;
+        }
+        .referral-card p {
+            color: #64748b;
+            font-size: 13px;
+            margin-bottom: 20px;
+        }
+        .link-box {
+            background: #07090f;
+            border: 1px solid #1e293b;
+            border-radius: 10px;
+            padding: 12px;
+            color: #38bdf8;
+            font-size: 13px;
+            font-weight: 600;
+            word-break: break-all;
+            margin-bottom: 14px;
+        }
+        .share-btn {
+            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+            color: #ffffff;
+            border: none;
+            width: 100%;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 800;
+            font-size: 15px;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        .stat-box {
+            background: linear-gradient(135deg, #0d1322 0%, #080c14 100%);
+            border: 1px solid #1a2333;
+            border-radius: 12px;
+            padding: 16px;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 20px;
+            font-weight: 800;
+            color: #38bdf8;
+            margin-top: 4px;
+        }
+        .stat-label {
+            font-size: 11px;
+            color: #64748b;
+            font-weight: 700;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- Header Section -->
+        <div class="header-card">
+            <h2>👥 Invite Friends</h2>
+            <p>Earn a percentage of every flower your friends collect!</p>
+        </div>
+
+        <!-- Stats Overview -->
+        <div class="stats-grid">
+            <div class="stat-box">
+                <div class="stat-label">TOTAL REFERRED</div>
+                <div class="stat-value" id="refCount">0</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-label">COMMISSION EARNED</div>
+                <div class="stat-value" id="refEarnings">0 🍀</div>
+            </div>
+        </div>
+
+        <!-- Referral Link Card -->
+        <div class="referral-card">
+            <h3>Your Referral Link</h3>
+            <p>Share this link with your friends on Telegram to start earning commissions.</p>
+            
+            <div class="link-box" id="refLinkText">https://t.me/flower_earn_bot?start=loading</div>
+
+            <button class="share-btn" onclick="copyReferralLink()">COPY LINK</button>
+        </div>
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="bottom-nav">
+        <a href="index.html" class="nav-item">
+            <span class="nav-icon">🏠</span>
+            <span>HOME</span>
+        </a>
+        <a href="earn.html" class="nav-item">
+            <span class="nav-icon">⚡</span>
+            <span>EARN</span>
+        </a>
+        <a href="game.html" class="nav-item play-tab">
+            <span class="nav-icon">💎</span>
+            <span>PLAY</span>
+        </a>
+        <a href="friends.html" class="nav-item active">
+            <span class="nav-icon">👥</span>
+            <span>FRIENDS</span>
+        </a>
+        <a href="wallet.html" class="nav-item">
+            <span class="nav-icon">👤</span>
+            <span>ME</span>
+        </a>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        // Get Telegram user ID to create a custom referral link
+        const user = tg.initDataUnsafe?.user;
+        const userId = user ? user.id : '7927840249'; // Fallback demo ID
+        
+        const referralLink = `https://t.me/flower_earn_bot?start=${userId}`;
+        document.getElementById('refLinkText').innerText = referralLink;
+
+        function copyReferralLink() {
+            navigator.clipboard.writeText(referralLink).then(() => {
+                if (tg.HapticFeedback) {
+                    tg.HapticFeedback.notificationOccurred('success');
+                }
+                alert('Referral link copied to clipboard!');
+            });
+        }
+    </script>
+</body>
+</html>
