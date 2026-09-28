@@ -212,10 +212,10 @@
             <div class="balance-title">Total Balance</div>
             <div class="balance-row">
                 <div>
-                    <div id="flowerBalance" class="balance-amount">Loading...</div>
+                    <div id="flowerBalance" class="balance-amount">361</div>
                     <div class="token-info">
                         <span class="token-badge">🌟 FLOWER</span>
-                        <span id="usdValue" class="usd-badge">$0.00</span>
+                        <span id="usdValue" class="usd-badge">$0.0072</span>
                     </div>
                 </div>
                 <div class="clover-icon">🌟</div>
@@ -266,7 +266,7 @@
         </a>
     </div>
 
-    <!-- Firebase SDK & Application Logic -->
+    <!-- Firebase SDK & Instant Local Storage Sync -->
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
         import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -283,6 +283,13 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
+
+        // Instant Load from Local Storage if available
+        const cachedBalance = localStorage.getItem('flower_balance');
+        if (cachedBalance) {
+            document.getElementById('flowerBalance').innerText = cachedBalance;
+            document.getElementById('usdValue').innerText = "$" + (Number(cachedBalance) * 0.00002).toFixed(4);
+        }
 
         async function initApp() {
             const balanceEl = document.getElementById('flowerBalance');
@@ -313,13 +320,13 @@
                     balance = docSnap.data().balance ?? 361;
                 }
 
-                if (balanceEl) balanceEl.innerText = balance;
-                if (usdEl) usdEl.innerText = "$" + (balance * 0.00002).toFixed(4);
+                // Update UI and Cache
+                balanceEl.innerText = balance;
+                usdEl.innerText = "$" + (balance * 0.00002).toFixed(4);
+                localStorage.setItem('flower_balance', balance);
 
             } catch (error) {
                 console.error("Database sync error:", error);
-                if (balanceEl) balanceEl.innerText = "361";
-                if (usdEl) usdEl.innerText = "$0.0072";
             }
         }
 
