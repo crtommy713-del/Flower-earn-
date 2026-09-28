@@ -111,10 +111,12 @@
             box-shadow: 0 4px 8px rgba(16, 185, 129, 0.2);
         }
         .ad-btn:disabled {
-            background: #334155;
-            color: #64748b;
+            background: #1e293b;
+            border: 1px solid #334155;
+            color: #fbbf24;
             cursor: not-allowed;
             box-shadow: none;
+            font-size: 0.75rem;
         }
         .nav-bar {
             position: fixed;
@@ -150,12 +152,12 @@
 
     <div class="header">
         <h1>⚡ Earn Hub</h1>
-        <p>Watch rewarded ads to grow your flower balance!</p>
+        <p>Watch rewarded ads every 4 hours to grow your balance!</p>
     </div>
 
     <div class="container">
         <div class="section-title">
-            <span>Rewarded Ads</span>
+            <span>Watch & Earn</span>
             <span id="availableAdsCount">4 available</span>
         </div>
 
@@ -220,44 +222,73 @@
 
     <script>
         const maxPerAd = 5;
-
-        function getTodayKey(adId) {
-            return `ad_${adId}_count_` + new Date().toISOString().slice(0, 10);
-        }
+        const cooldownTimeMs = 4 * 60 * 60 * 1000; // 4 Hours in milliseconds
 
         window.addEventListener('DOMContentLoaded', () => {
             updateUI();
+            setInterval(updateUI, 1000); // Update timers every second
         });
 
         function updateUI() {
+            const now = new Date().getTime();
+
             for (let i = 1; i <= 4; i++) {
-                const key = getTodayKey(i);
-                const currentViews = Number(localStorage.getItem(key) || 0);
-                
+                const viewsKey = `ad_${i}_views`;
+                const cooldownKey = `ad_${i}_cooldown_until`;
+
+                let currentViews = Number(localStorage.getItem(viewsKey) || 0);
+                let cooldownUntil = Number(localStorage.getItem(cooldownKey) || 0);
+
                 document.getElementById(`count${i}`).innerText = `${currentViews}/${maxPerAd}`;
+                const btn = document.getElementById(`btnAd${i}`);
 
                 if (currentViews >= maxPerAd) {
-                    document.getElementById(`btnAd${i}`).innerText = "COMPLETED";
-                    document.getElementById(`btnAd${i}`).disabled = true;
+                    // Check if 4 hours have passed since the cooldown started
+                    if (now >= cooldownUntil) {
+                        // Reset count after 4 hours expire
+                        localStorage.setItem(viewsKey, '0');
+                        localStorage.setItem(cooldownKey, '0');
+                        btn.innerText = "WATCH";
+                        btn.disabled = false;
+                        document.getElementById(`count${i}`).innerText = `0/${maxPerAd}`;
+                    } else {
+                        // Show live countdown timer
+                        const distance = cooldownUntil - now;
+                        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+                        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+                        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+                        btn.innerText = `⏳ ${hours}h ${minutes}m ${seconds}s`;
+                        btn.disabled = true;
+                    }
+                } else {
+                    btn.innerText = "WATCH";
+                    btn.disabled = false;
                 }
             }
         }
 
         function watchAdSlot(adId) {
-            const key = getTodayKey(adId);
-            let currentViews = Number(localStorage.getItem(key) || 0);
+            const viewsKey = `ad_${adId}_views`;
+            const cooldownKey = `ad_${adId}_cooldown_until`;
+
+            let currentViews = Number(localStorage.getItem(viewsKey) || 0);
 
             if (currentViews >= maxPerAd) {
-                alert("You have reached the daily limit for this ad!");
                 return;
             }
 
             // Check if Monetag SDK function is loaded
             if (typeof show_11911077 === 'function') {
                 show_11911077().then(() => {
-                    // Reward function executed after successful ad view
                     currentViews += 1;
-                    localStorage.setItem(key, currentViews);
+                    localStorage.setItem(viewsKey, currentViews);
+
+                    // If they just hit the max limit (5/5), start the 4-hour countdown clock
+                    if (currentViews >= maxPerAd) {
+                        const cooldownExpiry = new Date().getTime() + cooldownTimeMs;
+                        localStorage.setItem(cooldownKey, cooldownExpiry);
+                    }
 
                     let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
                     currentBalance += 50;
