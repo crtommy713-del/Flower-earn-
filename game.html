@@ -2,223 +2,279 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Flower Earn - Falling Flowers Game</title>
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-    <link rel="stylesheet" href="style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flower Earn - Flower Catcher</title>
     <style>
-        .game-arena {
-            position: relative;
-            width: 100%;
-            height: 320px;
-            background: #05070b;
-            border: 2px solid #1e293b;
-            border-radius: 16px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        body {
+            background-color: #0f172a;
+            background-image: radial-gradient(circle at top, rgba(217, 119, 6, 0.15), transparent 50%);
+            color: #f8fafc;
+            padding-bottom: 70px;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
             overflow: hidden;
-            margin-bottom: 16px;
         }
-        .falling-flower {
-            position: absolute;
-            font-size: 32px;
-            cursor: pointer;
-            user-select: none;
-            transition: transform 0.1s ease;
-            animation: fall linear infinite;
+        .header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 8px 15px;
+            text-align: center;
+            border-bottom: 1px solid #334155;
+            flex-shrink: 0;
         }
-        @keyframes fall {
-            0% { top: -40px; }
-            100% { top: 340px; }
+        .header h1 {
+            color: #fbbf24;
+            font-size: 1rem;
         }
-        .game-hud {
+        .header p {
+            font-size: 0.7rem;
+            color: #94a3b8;
+        }
+        .container {
+            padding: 10px;
+            max-width: 600px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            height: calc(100vh - 60px);
+        }
+        .game-stats {
             display: flex;
             justify-content: space-between;
-            align-items: center;
-            background: #101726;
-            padding: 12px 16px;
-            border-radius: 12px;
-            border: 1px solid #1e293b;
-            margin-bottom: 14px;
-            font-weight: 700;
-            font-size: 14px;
-            color: #38bdf8;
+            font-size: 0.85rem;
+            color: #fbbf24;
+            margin-bottom: 6px;
+            font-weight: bold;
+            flex-shrink: 0;
         }
-        .action-game-btn {
-            background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
-            color: #ffffff;
-            border: none;
-            width: 100%;
-            padding: 14px;
-            border-radius: 12px;
-            font-weight: 800;
-            font-size: 15px;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(29, 78, 216, 0.4);
-        }
-        .action-game-btn:disabled {
+        /* Forces canvas container to take up roughly 70% of available height */
+        .game-canvas-container {
             background: #1e293b;
-            color: #475569;
-            cursor: not-allowed;
-            box-shadow: none;
+            border-radius: 16px;
+            border: 1px solid #334155;
+            flex: 1;
+            height: 68vh;
+            position: relative;
+            overflow: hidden;
+            margin-bottom: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            touch-action: none;
+        }
+        canvas {
+            display: block;
+            width: 100%;
+            height: 100%;
+        }
+        .start-btn {
+            width: 100%;
+            padding: 12px;
+            background: #fbbf24;
+            color: #0f172a;
+            border: none;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
+            flex-shrink: 0;
+        }
+        .start-btn:active {
+            background: #d97706;
+        }
+        /* Navigation Bar */
+        .nav-bar {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: #1e293b;
+            display: flex;
+            justify-content: space-around;
+            padding: 8px 0;
+            border-top: 1px solid #334155;
+            z-index: 1000;
+        }
+        .nav-item {
+            color: #94a3b8;
+            text-decoration: none;
+            text-align: center;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .nav-item.active {
+            color: #fbbf24;
+        }
+        .nav-icon {
+            font-size: 1.1rem;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
-    <div class="app-container">
-        <!-- Header Section -->
-        <div class="header-card">
-            <h2>🌸 Flower Catcher</h2>
-            <p>Catch as many falling flowers as you can before time runs out!</p>
-        </div>
 
-        <!-- HUD: Score & Plays Left -->
-        <div class="game-hud">
-            <span id="playsLeftText">Plays: 3/3 Daily</span>
-            <span id="scoreText">Score: 0 🍀</span>
-        </div>
-
-        <!-- Game Arena where flowers drop -->
-        <div class="game-arena" id="gameArena">
-            <div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #475569; font-size: 14px; text-align: center;" id="arenaPlaceholder">
-                Press Start Below to Play!
-            </div>
-        </div>
-
-        <button class="action-game-btn" id="startBtn" onclick="startGameSession()">START GAME</button>
+    <div class="header">
+        <h1>🌸 Flower Catcher</h1>
+        <p>Catch falling flowers to grow your score!</p>
     </div>
 
-    <!-- Bottom Navigation Bar -->
-    <div class="bottom-nav">
+    <div class="container">
+        <div class="game-stats">
+            <span id="playsDisplay">Plays: 3/3 Daily</span>
+            <span>Score: <strong id="scoreDisplay">0</strong> 🌸</span>
+        </div>
+
+        <div class="game-canvas-container" id="canvasContainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+
+        <button class="start-btn" id="startBtn" onclick="startGame()">START GAME</button>
+    </div>
+
+    <!-- Standard Bottom Navigation Bar -->
+    <div class="nav-bar">
         <a href="index.html" class="nav-item">
-            <span class="nav-icon">🏠</span>
-            <span>HOME</span>
+            <span class="nav-icon">🏠</span> HOME
         </a>
         <a href="earn.html" class="nav-item">
-            <span class="nav-icon">⚡</span>
-            <span>EARN</span>
+            <span class="nav-icon">⚡</span> EARN
         </a>
-        <a href="game.html" class="nav-item active play-tab">
-            <span class="nav-icon">💎</span>
-            <span>PLAY</span>
+        <a href="game.html" class="nav-item active">
+            <span class="nav-icon">⭐</span> PLAY
         </a>
         <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span>
-            <span>FRIENDS</span>
+            <span class="nav-icon">👥</span> FRIENDS
         </a>
         <a href="wallet.html" class="nav-item">
-            <span class="nav-icon">👤</span>
-            <span>ME</span>
+            <span class="nav-icon">👤</span> ME
         </a>
     </div>
 
     <script>
-        const tg = window.Telegram.WebApp;
-        tg.expand();
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
 
-        let playsLeft = 3;
-        let score = 0;
-        let gameInterval;
-        let spawnerInterval;
-        let isPlaying = false;
-
-        function startGameSession() {
-            if (playsLeft <= 0) {
-                alert("Daily play limit reached! Come back tomorrow.");
-                return;
-            }
-
-            playsLeft--;
-            document.getElementById('playsLeftText').innerText = `Plays: ${playsLeft}/3 Daily`;
-            
-            const arena = document.getElementById('gameArena');
-            arena.innerHTML = ''; // Clear placeholder
-            
-            score = 0;
-            document.getElementById('scoreText').innerText = `Score: ${score} 🍀`;
-            
-            const btn = document.getElementById('startBtn');
-            btn.disabled = true;
-            isPlaying = true;
-
-            let timeLeft = 10; // 10 second game round
-            btn.innerText = `Catch Flowers! Time: ${timeLeft}s`;
-
-            // Spawn falling flowers continuously
-            spawnerInterval = setInterval(() => {
-                if (!isPlaying) return;
-                
-                const flower = document.createElement('div');
-                flower.className = 'falling-flower';
-                flower.innerHTML = '🌸';
-                
-                // Random horizontal position inside arena
-                const randomX = Math.random() * (arena.clientWidth - 40);
-                flower.style.left = randomX + 'px';
-                
-                // Random fall speed between 1.5s and 3s
-                const randomSpeed = 1.5 + Math.random() * 1.5;
-                flower.style.animationDuration = randomSpeed + 's';
-
-                // When user taps a falling flower
-                flower.addEventListener('touchstart', (e) => {
-                    e.preventDefault();
-                    collectFlower(flower);
-                });
-                flower.addEventListener('click', () => {
-                    collectFlower(flower);
-                });
-
-                arena.appendChild(flower);
-
-                // Remove flower element after animation finishes
-                setTimeout(() => {
-                    if (flower.parentElement) {
-                        flower.remove();
-                    }
-                }, randomSpeed * 1000);
-
-            }, 500); // Spawn a new flower every 0.5 seconds
-
-            // Timer countdown loop
-            const gameTimer = setInterval(() => {
-                timeLeft--;
-                if (timeLeft > 0) {
-                    btn.innerText = `Catch Flowers! Time: ${timeLeft}s`;
-                } else {
-                    clearInterval(gameTimer);
-                    clearInterval(spawnerInterval);
-                    isPlaying = false;
-                    
-                    // Clear remaining flowers
-                    arena.innerHTML = `<div style="position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); color: #38bdf8; font-size: 16px; font-weight: bold; text-align: center;">Round Over!<br>You caught ${score} Flowers!</div>`;
-
-                    if (tg.HapticFeedback) {
-                        tg.HapticFeedback.notificationOccurred('success');
-                    }
-
-                    alert(`Game Session Ended! You earned +${score * 2} Flowers added to your balance.`);
-                    
-                    if (playsLeft > 0) {
-                        btn.disabled = false;
-                        btn.innerText = "PLAY AGAIN";
-                    } else {
-                        btn.innerText = "DAILY LIMIT REACHED";
-                    }
-                }
-            }, 1000);
+        function initCanvasSize() {
+            canvas.width = canvas.parentElement.clientWidth;
+            canvas.height = canvas.parentElement.clientHeight;
         }
 
-        function collectFlower(flowerElement) {
+        // Run sizing immediately and upon window loads
+        window.addEventListener('load', initCanvasSize);
+        window.addEventListener('resize', initCanvasSize);
+        initCanvasSize();
+
+        let score = 0;
+        let isPlaying = false;
+        let flowers = [];
+        let basket = { width: 90, height: 26, x: 0, y: 0 };
+        let gameInterval = null;
+
+        // Position basket properly once dimensions are set
+        function resetBasket() {
+            basket.x = (canvas.width / 2) - (basket.width / 2);
+            basket.y = canvas.height - 40;
+        }
+
+        // Smooth touch movement tracking
+        canvas.addEventListener('touchmove', (e) => {
+            let rect = canvas.getBoundingClientRect();
+            let touchX = e.touches[0].clientX - rect.left;
+            basket.x = touchX - (basket.width / 2);
+            // Keep basket inside boundaries
+            if (basket.x < 0) basket.x = 0;
+            if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+        }, { passive: true });
+
+        canvas.addEventListener('mousemove', (e) => {
+            let rect = canvas.getBoundingClientRect();
+            let mouseX = e.clientX - rect.left;
+            basket.x = mouseX - (basket.width / 2);
+            if (basket.x < 0) basket.x = 0;
+            if (basket.x > canvas.width - basket.width) basket.x = canvas.width - basket.width;
+        });
+
+        function startGame() {
+            initCanvasSize();
+            resetBasket();
+            score = 0;
+            document.getElementById('scoreDisplay').innerText = score;
+            document.getElementById('startBtn').style.display = 'none';
+            isPlaying = true;
+            flowers = [];
+
+            // Spawn flowers periodically
+            if (gameInterval) clearInterval(gameInterval);
+            gameInterval = setInterval(spawnFlower, 750);
+
+            requestAnimationFrame(loop);
+
+            // Timer for 20 seconds game round
+            setTimeout(() => {
+                isPlaying = false;
+                clearInterval(gameInterval);
+                document.getElementById('startBtn').style.display = 'block';
+                document.getElementById('startBtn').innerText = "PLAY AGAIN";
+                alert(`Time's up! You caught ${score} flowers.`);
+            }, 20000);
+        }
+
+        function spawnFlower() {
             if (!isPlaying) return;
-            score++;
-            document.getElementById('scoreText').innerText = `Score: ${score} 🍀`;
-            
-            if (tg.HapticFeedback) {
-                tg.HapticFeedback.impactOccurred('light');
+            flowers.push({
+                x: Math.random() * (canvas.width - 30),
+                y: -30,
+                speed: 2.5 + Math.random() * 2.5
+            });
+        }
+
+        function loop() {
+            if (!canvas.width || !canvas.height) initCanvasSize();
+
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Draw Basket
+            ctx.fillStyle = '#fbbf24';
+            ctx.fillRect(basket.x, basket.y, basket.width, basket.height);
+
+            // Update & Draw Falling Flowers
+            for (let i = flowers.length - 1; i >= 0; i--) {
+                let f = flowers[i];
+                f.y += f.speed;
+
+                // Render Flower
+                ctx.font = "26px sans-serif";
+                ctx.fillText("🌸", f.x, f.y);
+
+                // Collision Check against Basket
+                if (
+                    f.y + 20 >= basket.y &&
+                    f.y <= basket.y + basket.height &&
+                    f.x >= basket.x - 15 &&
+                    f.x <= basket.x + basket.width
+                ) {
+                    score += 1;
+                    document.getElementById('scoreDisplay').innerText = score;
+                    flowers.splice(i, 1);
+                } 
+                // Remove if it falls past screen
+                else if (f.y > canvas.height) {
+                    flowers.splice(i, 1);
+                }
             }
-            
-            // Pop effect before removing
-            flowerElement.style.transform = "scale(1.5)";
-            setTimeout(() => flowerElement.remove(), 50);
+
+            if (isPlaying) {
+                requestAnimationFrame(loop);
+            }
         }
     </script>
 </body>

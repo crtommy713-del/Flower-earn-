@@ -3,334 +3,263 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Earn Bot</title>
-    
-    <!-- Telegram WebApp SDK -->
-    <script src="https://telegram.org/js/telegram-web-app.js"></script>
-
+    <title>Flower Earn - Home</title>
     <style>
         * {
-            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         body {
-            background: linear-gradient(135deg, #120f08 0%, #241d08 100%);
+            background-color: #0f172a;
+            background-image: radial-gradient(circle at top, rgba(217, 119, 6, 0.15), transparent 50%);
             color: #f8fafc;
-            min-height: 100vh;
             padding-bottom: 90px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+        .header {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            padding: 15px 20px;
+            text-align: left;
+            border-bottom: 1px solid #334155;
+        }
+        .header h1 {
+            color: #fbbf24;
+            font-size: 1.3rem;
         }
         .container {
-            padding: 16px;
-            max-width: 480px;
-            margin: 0 auto;
-        }
-        
-        /* Top Balance Card */
-        .balance-card {
-            background: linear-gradient(145deg, rgba(40, 34, 13, 0.9), rgba(22, 18, 6, 0.9));
-            border: 1px solid rgba(234, 179, 8, 0.35);
-            border-radius: 20px;
             padding: 20px;
+            max-width: 600px;
+            margin: 0 auto;
+            flex: 1;
+            width: 100%;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #1e293b, #0f172a);
+            border-radius: 16px;
+            padding: 20px;
+            border: 1px solid #334155;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
             position: relative;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5);
-            margin-bottom: 16px;
-            overflow: hidden;
         }
-        .balance-title {
-            font-size: 11px;
-            color: #facc15;
-            letter-spacing: 1.5px;
-            font-weight: 700;
-            margin-bottom: 4px;
+        .balance-card h2 {
+            font-size: 0.75rem;
             text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fbbf24;
+            margin-bottom: 8px;
         }
-        .balance-row {
+        .balance-main {
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffffff;
+            margin-bottom: 10px;
+        }
+        .balance-sub {
             display: flex;
-            justify-content: space-between;
-            align-items: center;
+            gap: 10px;
         }
-        .balance-amount {
-            font-size: 36px;
-            font-weight: 800;
-            color: #eab308;
-            letter-spacing: -0.5px;
-        }
-        .token-info {
-            display: flex;
-            align-items: center;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        .token-badge {
-            background: rgba(234, 179, 8, 0.15);
-            color: #facc15;
-            font-size: 11px;
-            padding: 3px 8px;
+        .badge-flower {
+            background: #334155;
+            color: #fbbf24;
+            padding: 4px 10px;
             border-radius: 6px;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
-        .usd-badge {
-            background: rgba(16, 185, 129, 0.2);
+        .badge-naira {
+            background: #065f46;
             color: #34d399;
-            font-size: 11px;
-            padding: 3px 8px;
+            padding: 4px 10px;
             border-radius: 6px;
-            font-weight: 600;
+            font-size: 0.8rem;
+            font-weight: bold;
         }
-        .clover-icon {
-            font-size: 45px;
-            filter: drop-shadow(0 0 10px rgba(234, 179, 8, 0.4));
-        }
-
-        /* Action Buttons Grid */
-        .action-grid {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 12px;
-            margin-bottom: 16px;
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
         }
         .action-btn {
-            background: linear-gradient(135deg, #78350f 0%, #451a03 100%);
-            border: 1px solid rgba(234, 179, 8, 0.4);
-            color: #ffffff;
+            flex: 1;
             padding: 14px;
-            border-radius: 14px;
-            font-size: 13px;
-            font-weight: 700;
-            text-align: center;
+            border-radius: 12px;
+            border: none;
+            font-weight: bold;
+            font-size: 0.95rem;
             cursor: pointer;
+            text-align: center;
+            text-decoration: none;
             display: flex;
             align-items: center;
             justify-content: center;
             gap: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
-            transition: all 0.2s ease;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            text-decoration: none;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
-        .action-btn:active {
-            transform: scale(0.97);
+        .btn-earn {
+            background: #d97706;
+            color: #ffffff;
+        }
+        .btn-withdraw {
             background: #b45309;
+            color: #ffffff;
         }
-
-        /* Task & Feature Cards */
-        .card-section-title {
-            font-size: 12px;
-            color: #facc15;
+        .section-title {
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin: 20px 0 10px 4px;
-            font-weight: 700;
+            color: #fbbf24;
+            margin-bottom: 10px;
         }
-        .task-card {
-            background: rgba(43, 35, 14, 0.6);
-            border: 1px solid rgba(234, 179, 8, 0.25);
-            border-radius: 16px;
-            padding: 16px;
-            margin-bottom: 12px;
+        .quick-action-card {
+            background: #1e293b;
+            border-radius: 14px;
+            padding: 15px;
+            border: 1px solid #334155;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
             text-decoration: none;
+            color: #f8fafc;
             transition: border-color 0.2s;
         }
-        .task-card:active {
-            border-color: #eab308;
+        .quick-action-card:hover {
+            border-color: #fbbf24;
         }
-        .task-left {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-        }
-        .task-icon {
-            font-size: 26px;
-            background: rgba(234, 179, 8, 0.1);
-            padding: 10px;
-            border-radius: 12px;
-            border: 1px solid rgba(234, 179, 8, 0.2);
-        }
-        .task-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #f1f5f9;
+        .quick-info h4 {
+            font-size: 0.95rem;
+            color: #fbbf24;
             margin-bottom: 3px;
         }
-        .task-desc {
-            font-size: 11px;
+        .quick-info p {
+            font-size: 0.8rem;
             color: #94a3b8;
         }
-        .arrow {
-            color: #facc15;
-            font-size: 16px;
-            font-weight: bold;
-        }
-
-        /* Bottom Navigation Bar */
+        /* Standard Navigation Bar */
         .nav-bar {
             position: fixed;
             bottom: 0;
             left: 0;
             width: 100%;
-            background: rgba(22, 18, 6, 0.95);
-            backdrop-filter: blur(12px);
+            background: #1e293b;
             display: flex;
             justify-content: space-around;
-            padding: 10px 0 16px 0;
-            border-top: 1px solid rgba(234, 179, 8, 0.2);
-            z-index: 100;
+            padding: 10px 0;
+            border-top: 1px solid #334155;
+            z-index: 1000;
         }
         .nav-item {
-            color: #64748b;
+            color: #94a3b8;
             text-decoration: none;
-            font-size: 10px;
             text-align: center;
-            font-weight: 600;
+            font-size: 0.75rem;
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 3px;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
         }
         .nav-item.active {
-            color: #eab308;
+            color: #fbbf24;
         }
         .nav-icon {
-            font-size: 18px;
+            font-size: 1.2rem;
+            margin-bottom: 2px;
         }
     </style>
 </head>
 <body>
 
+    <div class="header">
+        <h1>Flower Earn Bot</h1>
+    </div>
+
     <div class="container">
-        <!-- Top Balance Card -->
+        <!-- Balance Card with Naira Conversion -->
         <div class="balance-card">
-            <div class="balance-title">Total Balance</div>
-            <div class="balance-row">
-                <div>
-                    <div id="flowerBalance" class="balance-amount">361</div>
-                    <div class="token-info">
-                        <span class="token-badge">🌟 FLOWER</span>
-                        <span id="usdValue" class="usd-badge">$0.0072</span>
-                    </div>
-                </div>
-                <div class="clover-icon">🌟</div>
+            <h2>Total Balance</h2>
+            <div class="balance-main" id="flowerCount">761</div>
+            <div class="balance-sub">
+                <span class="badge-flower">🌸 FLOWER</span>
+                <span class="badge-naira" id="nairaBalance">₦152.20</span>
             </div>
         </div>
 
         <!-- Action Buttons -->
-        <div class="action-grid">
-            <a href="earn.html" class="action-btn">
-                <span>⚡</span> Earn Ads
-            </a>
-            <button class="action-btn" style="border:none; width:100%;" onclick="alert('Withdrawals unlock once task limits are met!')">
-                <span>📥</span> Withdraw
+        <div class="action-buttons">
+            <button class="action-btn btn-earn" onclick="handleEarnAdClick()">
+                ⚡ EARN ADS
             </button>
+            <a href="wallet.html" class="action-btn btn-withdraw">
+                📥 WITHDRAW
+            </a>
         </div>
 
-        <!-- Quick Navigation to Earn Section -->
-        <div class="card-section-title">Quick Actions</div>
+        <div class="section-title">Quick Actions</div>
         
-        <a href="earn.html" class="task-card">
-            <div class="task-left">
-                <div class="task-icon">🚀</div>
-                <div>
-                    <div class="task-title">Go to Earn Hub</div>
-                    <div class="task-desc">Complete smart links & ads to grow balance</div>
-                </div>
+        <a href="earn.html" class="quick-action-card">
+            <div class="quick-info">
+                <h4>Go to Earn Hub</h4>
+                <p>Complete smart links & ads to grow balance</p>
             </div>
-            <div class="arrow">›</div>
+            <span>›</span>
         </a>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
         <a href="index.html" class="nav-item active">
-            <span class="nav-icon">🏠</span> Home
+            <span class="nav-icon">🏠</span> HOME
         </a>
         <a href="earn.html" class="nav-item">
-            <span class="nav-icon">⚡</span> Earn
+            <span class="nav-icon">⚡</span> EARN
         </a>
         <a href="game.html" class="nav-item">
-            <span class="nav-icon">🌟</span> Play
+            <span class="nav-icon">⭐</span> PLAY
         </a>
         <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span> Friends
+            <span class="nav-icon">👥</span> FRIENDS
         </a>
         <a href="wallet.html" class="nav-item">
-            <span class="nav-icon">👤</span> Me
+            <span class="nav-icon">👤</span> ME
         </a>
     </div>
 
-    <!-- Firebase SDK & Instant Local Storage Sync -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-        import { getFirestore, doc, getDoc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    <script>
+        // Monetag Smart Link & Ad-Blocker Protection Logic
+        const monetagUrl = "https://omg10.com/your-smart-link-id"; // Replace with your Monetag link
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyC9C-bNkvpueC3qK2TxOlPU_goLavCQiBk",
-            authDomain: "flower-earn.firebaseapp.com",
-            projectId: "flower-earn",
-            storageBucket: "flower-earn.firebasestorage.app",
-            messagingSenderId: "799031720926",
-            appId: "1:799031720926:web:68f997c2d135242f463b4f",
-            measurementId: "G-JMLSY039Z2"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getFirestore(app);
-
-        // Instant Load from Local Storage if available
-        const cachedBalance = localStorage.getItem('flower_balance');
-        if (cachedBalance) {
-            document.getElementById('flowerBalance').innerText = cachedBalance;
-            document.getElementById('usdValue').innerText = "$" + (Number(cachedBalance) * 0.00002).toFixed(4);
-        }
-
-        async function initApp() {
-            const balanceEl = document.getElementById('flowerBalance');
-            const usdEl = document.getElementById('usdValue');
-
+        function handleEarnAdClick() {
+            let adBlocked = false;
             try {
-                let userId = "7927840249";
-                let username = "DemoUser";
-
-                if (window.Telegram?.WebApp?.initDataUnsafe?.user) {
-                    const tgUser = window.Telegram.WebApp.initDataUnsafe.user;
-                    userId = String(tgUser.id);
-                    username = tgUser.username || tgUser.first_name || "TelegramUser";
-                }
-
-                const userRef = doc(db, "users", userId);
-                let docSnap = await getDoc(userRef);
+                let testAd = document.createElement('div');
+                testAd.innerHTML = '&nbsp;';
+                testAd.className = 'adsbox';
+                document.body.appendChild(testAd);
                 
-                let balance = 361;
-                if (!docSnap.exists()) {
-                    await setDoc(userRef, {
-                        telegramId: userId,
-                        username: username,
-                        balance: 361,
-                        createdAt: serverTimestamp()
-                    });
-                } else {
-                    balance = docSnap.data().balance ?? 361;
-                }
+                window.setTimeout(function() {
+                    if (testAd.offsetHeight === 0) {
+                        adBlocked = true;
+                    }
+                    testAd.remove();
+                    
+                    if (adBlocked) {
+                        alert("Ad-blocker detected! Please disable your ad-blocker to view ads and count your views towards your withdrawal.");
+                    } else {
+                        // Increment verified ad views for withdrawal requirement
+                        let currentViews = Number(localStorage.getItem('monetag_verified_views') || 0);
+                        localStorage.setItem('monetag_verified_views', currentViews + 1);
 
-                // Update UI and Cache
-                balanceEl.innerText = balance;
-                usdEl.innerText = "$" + (balance * 0.00002).toFixed(4);
-                localStorage.setItem('flower_balance', balance);
-
-            } catch (error) {
-                console.error("Database sync error:", error);
+                        // Open Monetag link in new tab
+                        window.open(monetagUrl, '_blank');
+                    }
+                }, 100);
+            } catch(e) {
+                window.open(monetagUrl, '_blank');
             }
         }
-
-        initApp();
     </script>
 </body>
 </html>

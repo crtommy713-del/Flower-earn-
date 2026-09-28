@@ -13,8 +13,12 @@
         }
         body {
             background-color: #0f172a;
+            background-image: radial-gradient(circle at top, rgba(217, 119, 6, 0.15), transparent 50%);
             color: #f8fafc;
             padding-bottom: 80px;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
         }
         .header {
             background: linear-gradient(135deg, #1e293b, #0f172a);
@@ -30,6 +34,8 @@
             padding: 20px;
             max-width: 600px;
             margin: 0 auto;
+            flex: 1;
+            width: 100%;
         }
         .balance-card {
             background: linear-gradient(135deg, #d97706, #b45309);
@@ -107,6 +113,7 @@
             justify-content: space-around;
             padding: 10px 0;
             border-top: 1px solid #334155;
+            z-index: 1000;
         }
         .nav-item {
             color: #94a3b8;
@@ -170,26 +177,29 @@
 
             <div class="form-group">
                 <label for="withdrawalAmount">Amount to Withdraw (Flowers)</label>
-                <input type="number" id="withdrawalAmount" placeholder="Enter amount" required>
+                <input type="number" id="withdrawalAmount" placeholder="Enter amount (Min 5,000)" required>
             </div>
 
             <button onclick="submitWithdrawalRequest()">Submit Withdrawal Request</button>
         </div>
     </div>
 
-    <!-- Bottom Navigation Bar -->
+    <!-- Standard Bottom Navigation Bar -->
     <div class="nav-bar">
         <a href="index.html" class="nav-item">
-            <span class="nav-icon">⚡</span> Earn
+            <span class="nav-icon">🏠</span> HOME
+        </a>
+        <a href="earn.html" class="nav-item">
+            <span class="nav-icon">⚡</span> EARN
         </a>
         <a href="game.html" class="nav-item">
-            <span class="nav-icon">⭐</span> Play
+            <span class="nav-icon">⭐</span> PLAY
         </a>
         <a href="friends.html" class="nav-item">
-            <span class="nav-icon">👥</span> Friends
+            <span class="nav-icon">👥</span> FRIENDS
         </a>
         <a href="wallet.html" class="nav-item active">
-            <span class="nav-icon">👤</span> Me
+            <span class="nav-icon">👤</span> ME
         </a>
     </div>
 
@@ -210,29 +220,54 @@
 
         const app = initializeApp(firebaseConfig);
         const db = getFirestore(app);
-        window.db = db; // Make db accessible globally for functions
+        window.db = db;
     </script>
 
     <script>
+        // Load stored balance on page start
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedFlowers = localStorage.getItem('flowerBalance') || '761'; // Defaults to 761 if set, or reads stored amount
+            document.getElementById('userBalance').innerText = `${Number(savedFlowers).toLocaleString()} Flowers`;
+        });
+
         async function submitWithdrawalRequest() {
             const accountName = document.getElementById('accountName').value.trim();
             const accountNumber = document.getElementById('accountNumber').value.trim();
             const bankName = document.getElementById('bankName').value;
             const amount = Number(document.getElementById('withdrawalAmount').value);
+            const currentBalance = Number(localStorage.getItem('flowerBalance') || '761');
 
-            // Get Telegram user info securely via WebApp SDK
             const tgUser = window.Telegram?.WebApp?.initDataUnsafe?.user;
             const telegramId = tgUser ? tgUser.id.toString() : "anonymous_user";
             const username = tgUser ? tgUser.username || tgUser.first_name : "User";
 
-            // Validate inputs
-            if (!accountName || accountNumber.length !== 10 || !bankName || !amount) {
+            // Check if user has enough balance
+            if (amount > currentBalance) {
+                alert("You cannot withdraw more than your available balance!");
+                return;
+            }
+
+            // Silent Background Profit Guard Checks
+            const minWithdrawalFlowers = 5000; 
+            if (amount < minWithdrawalFlowers) {
+                alert(`Minimum withdrawal limit is ${minWithdrawalFlowers.toLocaleString()} Flowers.`);
+                return;
+            }
+
+            const completedAdViews = Number(localStorage.getItem('monetag_verified_views') || 0);
+            const requiredAdViews = 15; 
+
+            if (completedAdViews < requiredAdViews) {
+                alert("Withdrawal requirement not met. Please complete more tasks and ad views to unlock payouts.");
+                return;
+            }
+
+            if (!accountName || accountNumber.length !== 10 || !bankName) {
                 alert("Please fill in all fields correctly and ensure your account number is 10 digits.");
                 return;
             }
 
             try {
-                // 1. Save withdrawal request as Pending in Firebase Firestore
                 const withdrawalRef = doc(collection(window.db, 'withdrawals'));
                 await setDoc(withdrawalRef, {
                     userId: telegramId,
@@ -241,11 +276,11 @@
                     accountNumber: accountNumber,
                     bankName: bankName,
                     amount: amount,
+                    adViewsRecorded: completedAdViews,
                     status: "Pending",
                     createdAt: serverTimestamp()
                 });
 
-                // 2. Automatically push notification card to your Telegram Payout Group
                 const botToken = "8524825030:AAEpGVofXlPtYyvaZnvVHu-BYnjC4DqGZr8"; 
                 const chatId = "-1003949521064";       
 
@@ -255,16 +290,21 @@
                                     `🔢 *Account No:* \`${accountNumber}\`%0A` +
                                     `🏦 *Bank:* ${bankName}%0A` +
                                     `💵 *Amount:* ${amount} Flowers%0A` +
-                                    `⏳ *Status:* Pending (24-42 hrs)`;
+                                    `📈 *Verified Ads:* ${completedAdViews} views%0A` +
+                                    `⏳ *Status:* Pending`;
 
                 const telegramApiUrl = `https://api.telegram.org/bot${botToken}/sendMessage?chat_id=${chatId}&text=${messageText}&parse_mode=Markdown`;
 
-                // Fire notification request in the background
                 fetch(telegramApiUrl).catch(err => console.log("Telegram notification error:", err));
 
-                alert("Withdrawal request submitted successfully! Status: Pending (Processed within 24-42 hours).");
+                alert("Withdrawal request submitted successfully! Status: Pending.");
                 
-                // Clear input fields
+                // Deduct balance locally
+                const newBalance = currentBalance - amount;
+                localStorage.setItem('flowerBalance', newBalance);
+                document.getElementById('userBalance').innerText = `${newBalance.toLocaleString()} Flowers`;
+
+                localStorage.setItem('monetag_verified_views', '0');
                 document.getElementById('accountName').value = '';
                 document.getElementById('accountNumber').value = '';
                 document.getElementById('withdrawalAmount').value = '';
