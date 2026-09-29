@@ -242,10 +242,6 @@
         const conversionRate = 500 / 5000; 
         const minWithdrawalFlowers = 5000;
 
-        // Telegram Bot Credentials Configuration
-        const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // Replace with your BotFather token
-        const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE";       // Replace with your Telegram chat/channel ID
-
         window.addEventListener('DOMContentLoaded', () => {
             loadWalletData();
             loadWithdrawalHistory();
@@ -291,7 +287,7 @@
             };
 
             let history = JSON.parse(localStorage.getItem('withdrawalHistory') || '[]');
-            history.unshift(payoutRecord); // Add to top of list
+            history.unshift(payoutRecord);
             localStorage.setItem('withdrawalHistory', JSON.stringify(history));
 
             // Reset balance after payout request
@@ -308,17 +304,21 @@
         }
 
         function sendTelegramNotification(bank, accNo, accName, flowers, naira) {
-            if (TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE" || TELEGRAM_CHAT_ID === "YOUR_CHAT_ID_HERE") {
-                console.log("Telegram Token or Chat ID not configured yet.");
+            // Your Telegram Bot Token and Group Chat ID
+            const TELEGRAM_BOT_TOKEN = "7927840249:AAG...your_token_here"; // Replace or ensure your token is correct
+            const TELEGRAM_CHAT_ID = "-1003949521064";
+
+            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes("your_token_here")) {
+                console.log("Telegram Token not configured properly.");
                 return;
             }
 
-            const message = `🔔 *New Withdrawal Request*\n\n` +
-                            `🌸 Flowers: ${flowers.toLocaleString()}\n` +
-                            `💵 Amount: ₦${naira}\n` +
-                            `🏦 Bank: ${bank}\n` +
-                            `🔢 Account No: ${accNo}\n` +
-                            `👤 Name: ${accName}`;
+            const message = `<b>🔔 New Withdrawal Request</b>\n\n` +
+                            `🌸 <b>Flowers:</b> ${flowers.toLocaleString()}\n` +
+                            `💵 <b>Amount:</b> ₦${naira}\n` +
+                            `🏦 <b>Bank:</b> ${bank}\n` +
+                            `🔢 <b>Account No:</b> ${accNo}\n` +
+                            `👤 <b>Name:</b> ${accName}`;
 
             const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
 
@@ -328,9 +328,16 @@
                 body: JSON.stringify({
                     chat_id: TELEGRAM_CHAT_ID,
                     text: message,
-                    parse_mode: 'Markdown'
+                    parse_mode: 'HTML'
                 })
-            }).catch(err => console.error("Telegram API Error:", err));
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.ok) {
+                    console.error("Telegram Error:", data.description);
+                }
+            })
+            .catch(err => console.error("Telegram API Network Error:", err));
         }
 
         function loadWithdrawalHistory() {
