@@ -4,9 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flower Earn - Earn Hub</title>
-    
-    <!-- Monetag SDK Script Tag -->
-    <script src="https://alwingulla.com/88/tag.min.js" data-zone="11911077" async data-cfasync="false"></script>
 
     <style>
         * {
@@ -226,7 +223,7 @@
 
         window.addEventListener('DOMContentLoaded', () => {
             updateUI();
-            setInterval(updateUI, 1000); // Live update timers every second
+            setInterval(updateUI, 1000); // Live countdown ticker
         });
 
         function updateUI() {
@@ -244,14 +241,14 @@
 
                 if (currentViews >= maxPerAd) {
                     if (now >= cooldownUntil) {
-                        // Cooldown expired, reset the slot
+                        // Reset slot after 4 hours expire
                         localStorage.setItem(viewsKey, '0');
                         localStorage.setItem(cooldownKey, '0');
                         btn.innerText = "WATCH";
                         btn.disabled = false;
                         document.getElementById(`count${i}`).innerText = `0/${maxPerAd}`;
                     } else {
-                        // Show active countdown timer
+                        // Display active 4-hour countdown
                         const distance = cooldownUntil - now;
                         const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
                         const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
@@ -277,44 +274,34 @@
                 return;
             }
 
-            // Direct fallback links for each ad slot
-            const fallbackLinks = {
+            // Direct links for each ad slot
+            const adLinks = {
                 1: "https://omg10.com/4/11910761",
                 2: "https://omg10.com/4/11496906",
                 3: "https://omg10.com/4/11910754",
                 4: "https://omg10.com/4/11505493"
             };
 
-            const grantRewardAndOpenAd = () => {
-                currentViews += 1;
-                localStorage.setItem(viewsKey, currentViews);
+            // Open the ad link in a new tab/window
+            window.open(adLinks[adId], '_blank');
 
-                if (currentViews >= maxPerAd) {
-                    const cooldownExpiry = new Date().getTime() + cooldownTimeMs;
-                    localStorage.setItem(cooldownKey, cooldownExpiry);
-                }
+            // Increment view count
+            currentViews += 1;
+            localStorage.setItem(viewsKey, currentViews);
 
-                let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
-                currentBalance += 50;
-                localStorage.setItem('flowerBalance', currentBalance);
-
-                updateUI();
-                alert('You have seen an ad! +50 Flowers added.');
-            };
-
-            // Try Monetag SDK first; seamlessly fall back to direct links if loading or blocked
-            if (typeof show_11911077 === 'function') {
-                show_11911077().then(() => {
-                    grantRewardAndOpenAd();
-                }).catch((error) => {
-                    console.log("SDK ad failed, opening fallback link", error);
-                    window.open(fallbackLinks[adId], '_blank');
-                    grantRewardAndOpenAd();
-                });
-            } else {
-                window.open(fallbackLinks[adId], '_blank');
-                grantRewardAndOpenAd();
+            // If it hits 5/5, lock it and start the 4-hour countdown
+            if (currentViews >= maxPerAd) {
+                const cooldownExpiry = new Date().getTime() + cooldownTimeMs;
+                localStorage.setItem(cooldownKey, cooldownExpiry);
             }
+
+            // Reward flowers
+            let currentBalance = Number(localStorage.getItem('flowerBalance') || 761);
+            currentBalance += 50;
+            localStorage.setItem('flowerBalance', currentBalance);
+
+            updateUI();
+            alert('Ad completed! +50 Flowers added.');
         }
     </script>
 </body>
