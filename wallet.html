@@ -3,7 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Flower Earn - Wallet</title>
+    <title>Flower Earn - Wallet & Payout</title>
+
     <style>
         * {
             margin: 0;
@@ -37,60 +38,56 @@
             flex: 1;
             width: 100%;
         }
-        .wallet-card {
+        .balance-card {
             background: #1e293b;
+            border: 1px solid #334155;
             border-radius: 16px;
             padding: 20px;
-            border: 1px solid #334155;
-            margin-bottom: 20px;
             text-align: center;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+            margin-bottom: 20px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.3);
         }
-        .wallet-card h3 {
-            font-size: 0.8rem;
-            color: #94a3b8;
+        .balance-title {
+            font-size: 0.75rem;
             text-transform: uppercase;
             letter-spacing: 1px;
-            margin-bottom: 5px;
+            color: #94a3b8;
+            margin-bottom: 8px;
         }
-        .wallet-balance {
-            font-size: 2.2rem;
+        .balance-amount {
+            font-size: 1.8rem;
             font-weight: bold;
             color: #fbbf24;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
-        .wallet-naira {
-            font-size: 1rem;
+        .balance-naira {
+            font-size: 0.95rem;
             color: #34d399;
-            font-weight: bold;
-        }
-        /* Profit Guard notice is now hidden from view */
-        .guard-notice {
-            display: none;
+            font-weight: 600;
         }
         .form-group {
             margin-bottom: 15px;
         }
-        .form-group label {
-            display: block;
-            font-size: 0.85rem;
+        .form-label {
+            font-size: 0.8rem;
             color: #94a3b8;
             margin-bottom: 6px;
+            display: block;
         }
-        .form-control {
+        .form-input {
             width: 100%;
             padding: 12px;
-            border-radius: 10px;
-            border: 1px solid #334155;
             background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 10px;
             color: #f8fafc;
             font-size: 0.95rem;
-        }
-        .form-control:focus {
             outline: none;
+        }
+        .form-input:focus {
             border-color: #fbbf24;
         }
-        .withdraw-btn {
+        .submit-btn {
             width: 100%;
             padding: 14px;
             background: #fbbf24;
@@ -100,12 +97,66 @@
             font-weight: bold;
             font-size: 1rem;
             cursor: pointer;
-            box-shadow: 0 4px 10px rgba(251, 191, 36, 0.3);
+            box-shadow: 0 4px 10px rgba(251, 191, 36, 0.2);
             margin-top: 10px;
         }
-        .withdraw-btn:active {
-            background: #d97706;
+        .submit-btn:active {
+            transform: scale(0.98);
         }
+        
+        /* Withdrawal History Section */
+        .history-section {
+            margin-top: 30px;
+        }
+        .history-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            color: #fbbf24;
+            margin-bottom: 12px;
+        }
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .history-item {
+            background: #1e293b;
+            border: 1px solid #334155;
+            border-radius: 12px;
+            padding: 12px 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .history-info div:first-child {
+            font-size: 0.9rem;
+            font-weight: bold;
+            color: #f8fafc;
+        }
+        .history-info div:last-child {
+            font-size: 0.75rem;
+            color: #94a3b8;
+            margin-top: 3px;
+        }
+        .history-status {
+            font-size: 0.75rem;
+            font-weight: bold;
+            padding: 4px 8px;
+            border-radius: 6px;
+            background: rgba(52, 211, 153, 0.1);
+            color: #34d399;
+        }
+        .empty-history {
+            text-align: center;
+            color: #64748b;
+            font-size: 0.85rem;
+            padding: 15px;
+            background: #1e293b;
+            border: 1px dashed #334155;
+            border-radius: 12px;
+        }
+
         .nav-bar {
             position: fixed;
             bottom: 0;
@@ -139,39 +190,45 @@
 <body>
 
     <div class="header">
-        <h1>📥 Wallet & Payout</h1>
+        <h1>📦 Wallet & Payout</h1>
     </div>
 
     <div class="container">
-        <div class="wallet-card">
-            <h3>Available Balance</h3>
-            <div class="wallet-balance" id="userBalance">0 Flowers</div>
-            <div class="wallet-naira" id="userNaira">₦0.00</div>
+        <!-- Balance Card -->
+        <div class="balance-card">
+            <div class="balance-title">Available Balance</div>
+            <div class="balance-amount" id="flowerDisplay">0 Flowers</div>
+            <div class="balance-naira" id="nairaDisplay">₦0.00</div>
         </div>
 
-        <!-- Hidden Profit Guard Notice (Logic remains active in background) -->
-        <div class="guard-notice" id="guardNotice">
-            <strong>🔒 Profit Guard Active:</strong> You need a minimum of <strong>5,000 Flowers (₦500)</strong> and at least <strong>15 verified Monetag ad views</strong> to submit a withdrawal request.
+        <!-- Withdrawal Form -->
+        <div class="form-group">
+            <label class="form-label">Bank Name</label>
+            <input type="text" id="bankName" class="form-input" placeholder="e.g. Opay, Kuda">
         </div>
 
         <div class="form-group">
-            <label>Bank Name</label>
-            <input type="text" id="bankName" class="form-control" placeholder="e.g. OPay, Access Bank">
+            <label class="form-label">Account Number</label>
+            <input type="number" id="accountNumber" class="form-input" placeholder="Enter 10-digit account number">
         </div>
 
         <div class="form-group">
-            <label>Account Number</label>
-            <input type="number" id="accountNumber" class="form-control" placeholder="0123456789">
+            <label class="form-label">Account Name</label>
+            <input type="text" id="accountName" class="form-input" placeholder="Enter account holder name">
         </div>
 
-        <div class="form-group">
-            <label>Account Name</label>
-            <input type="text" id="accountName" class="form-control" placeholder="John Doe">
-        </div>
+        <button class="submit-btn" onclick="submitWithdrawal()">SUBMIT WITHDRAWAL</button>
 
-        <button class="withdraw-btn" onclick="requestWithdrawal()">SUBMIT WITHDRAWAL</button>
+        <!-- Withdrawal History Section -->
+        <div class="history-section">
+            <div class="history-title">Withdrawal History</div>
+            <div class="history-list" id="historyList">
+                <!-- Injected via JavaScript -->
+            </div>
+        </div>
     </div>
 
+    <!-- Bottom Navigation -->
     <div class="nav-bar">
         <a href="index.html" class="nav-item"><span class="nav-icon">🏠</span> HOME</a>
         <a href="earn.html" class="nav-item"><span class="nav-icon">⚡</span> EARN</a>
@@ -181,41 +238,124 @@
     </div>
 
     <script>
+        // Fixed Exchange Rate: 5,000 Flowers = 500 Naira
+        const conversionRate = 500 / 5000; 
         const minWithdrawalFlowers = 5000;
-        const requiredAdViews = 15;
+
+        // Telegram Bot Credentials Configuration
+        const TELEGRAM_BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"; // Replace with your BotFather token
+        const TELEGRAM_CHAT_ID = "YOUR_CHAT_ID_HERE";       // Replace with your Telegram chat/channel ID
 
         window.addEventListener('DOMContentLoaded', () => {
-            const balance = Number(localStorage.getItem('flowerBalance') || 1048);
-            document.getElementById('userBalance').innerText = `${balance.toLocaleString()} Flowers`;
-            
-            const nairaValue = (balance / 10).toFixed(2);
-            document.getElementById('userNaira').innerText = `₦${Number(nairaValue).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}`;
+            loadWalletData();
+            loadWithdrawalHistory();
         });
 
-        function requestWithdrawal() {
-            const balance = Number(localStorage.getItem('flowerBalance') || 1048);
-            const verifiedViews = Number(localStorage.getItem('monetag_verified_views') || 0);
+        function loadWalletData() {
+            let balance = Number(localStorage.getItem('flowerBalance') || 5026);
+            document.getElementById('flowerDisplay').innerText = `${balance.toLocaleString()} Flowers`;
             
-            const bankName = document.getElementById('bankName').value.trim();
-            const accountNumber = document.getElementById('accountNumber').value.trim();
-            const accountName = document.getElementById('accountName').value.trim();
+            let nairaValue = balance * conversionRate;
+            document.getElementById('nairaDisplay').innerText = `₦${nairaValue.toFixed(2)}`;
+        }
 
-            if (!bankName || !accountNumber || !accountName) {
-                alert("Please fill in all your bank account details.");
-                return;
-            }
+        function submitWithdrawal() {
+            let balance = Number(localStorage.getItem('flowerBalance') || 5026);
+            let bankName = document.getElementById('bankName').value.trim();
+            let accountNumber = document.getElementById('accountNumber').value.trim();
+            let accountName = document.getElementById('accountName').value.trim();
 
             if (balance < minWithdrawalFlowers) {
-                alert(`Insufficient balance! You need at least 5,000 Flowers (₦500) to request a payout.`);
+                alert(`Minimum withdrawal is ${minWithdrawalFlowers.toLocaleString()} Flowers!`);
                 return;
             }
 
-            if (verifiedViews < requiredAdViews) {
-                alert(`Profit Guard Security: You have completed ${verifiedViews}/${requiredAdViews} required sponsor ad views. Please watch more ads in the Earn Hub before withdrawing.`);
+            if (!bankName || !accountNumber || !accountName) {
+                alert("Please fill in all banking details correctly.");
                 return;
             }
 
-            alert("Withdrawal request submitted successfully! It will be reviewed and processed to your bank shortly.");
+            let nairaAmount = (balance * conversionRate).toFixed(2);
+
+            // Send notification to Telegram
+            sendTelegramNotification(bankName, accountNumber, accountName, balance, nairaAmount);
+
+            // Deduct balance and save history
+            let payoutRecord = {
+                date: new Date().toLocaleDateString() + ' ' + new Date().toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}),
+                flowers: balance,
+                naira: nairaAmount,
+                bank: bankName,
+                account: accountNumber,
+                name: accountName
+            };
+
+            let history = JSON.parse(localStorage.getItem('withdrawalHistory') || '[]');
+            history.unshift(payoutRecord); // Add to top of list
+            localStorage.setItem('withdrawalHistory', JSON.stringify(history));
+
+            // Reset balance after payout request
+            localStorage.setItem('flowerBalance', '0');
+
+            alert('Withdrawal request submitted successfully!');
+            loadWalletData();
+            loadWithdrawalHistory();
+
+            // Clear inputs
+            document.getElementById('bankName').value = '';
+            document.getElementById('accountNumber').value = '';
+            document.getElementById('accountName').value = '';
+        }
+
+        function sendTelegramNotification(bank, accNo, accName, flowers, naira) {
+            if (TELEGRAM_BOT_TOKEN === "YOUR_BOT_TOKEN_HERE" || TELEGRAM_CHAT_ID === "YOUR_CHAT_ID_HERE") {
+                console.log("Telegram Token or Chat ID not configured yet.");
+                return;
+            }
+
+            const message = `🔔 *New Withdrawal Request*\n\n` +
+                            `🌸 Flowers: ${flowers.toLocaleString()}\n` +
+                            `💵 Amount: ₦${naira}\n` +
+                            `🏦 Bank: ${bank}\n` +
+                            `🔢 Account No: ${accNo}\n` +
+                            `👤 Name: ${accName}`;
+
+            const url = `https://api.telegram.org/bot${TELEGRAM_BOT_TOKEN}/sendMessage`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    chat_id: TELEGRAM_CHAT_ID,
+                    text: message,
+                    parse_mode: 'Markdown'
+                })
+            }).catch(err => console.error("Telegram API Error:", err));
+        }
+
+        function loadWithdrawalHistory() {
+            let historyListContainer = document.getElementById('historyList');
+            let history = JSON.parse(localStorage.getItem('withdrawalHistory') || '[]');
+
+            if (history.length === 0) {
+                historyListContainer.innerHTML = `<div class="empty-history">No withdrawal history yet.</div>`;
+                return;
+            }
+
+            let html = '';
+            history.forEach(item => {
+                html += `
+                    <div class="history-item">
+                        <div class="history-info">
+                            <div>₦${item.naira} (${item.flowers.toLocaleString()} Flowers)</div>
+                            <div>${item.bank} - ${item.account} | ${item.date}</div>
+                        </div>
+                        <div class="history-status">Pending</div>
+                    </div>
+                `;
+            });
+
+            historyListContainer.innerHTML = html;
         }
     </script>
 </body>
